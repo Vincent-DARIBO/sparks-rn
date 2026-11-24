@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { Product } from '../types';
+import type { Product, ProductFormValues } from '../types';
 
 /**
  * L'inventaire complet : la liste des produits ET leurs quantités.
@@ -24,5 +24,11 @@ export default function useInventory(initialProducts: Product[]) {
   // Remplace tout le catalogue (démo de performances : 12 ↔ 5 000 produits).
   const replaceAll = useCallback((nextProducts: Product[]) => setProducts(nextProducts), []);
 
-  return { products, adjustQuantity, replaceAll };
+  // Module 6 : remplace les champs modifiables d'un produit, l'identifiant ne change pas.
+  // Fonctionne aussi en démo 5 000 produits : ils vivent dans ce même état.
+  const updateProduct = useCallback((id: string, values: ProductFormValues) => {
+    setProducts((prev) => prev.map((p) => (p.id === id ? { id, ...values } : p)));
+  }, []);
+
+  return { products, adjustQuantity, replaceAll, updateProduct };
 }
