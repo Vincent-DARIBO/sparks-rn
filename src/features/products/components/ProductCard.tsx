@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useThemedStyles, type Theme } from '@/theme';
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
-import { getStockStatus } from '../utils/stock';
+import { getStockStatus, getStockText } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
 
@@ -49,7 +49,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
         <Pressable
           onPress={() => onPress(product.id)}
           accessibilityRole="button"
-          accessibilityLabel={`Ouvrir la fiche de ${product.name}`}
+          accessibilityLabel={`Ouvrir la fiche de ${product.name}, ${getStockText(status, product.quantity)}`}
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
           <ProductThumbnail size={THUMBNAIL_SIZE} photoUri={product.photoUri} />

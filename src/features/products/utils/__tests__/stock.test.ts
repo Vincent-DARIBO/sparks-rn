@@ -1,4 +1,4 @@
-import { getStockStatus } from '../stock';
+import { getStockStatus, getStockText } from '../stock';
 
 /** Fonction pure : mêmes entrées, même sortie. Aucun rendu, aucune doublure. */
 describe('getStockStatus', () => {
@@ -13,5 +13,13 @@ describe('getStockStatus', () => {
 
   it('considère le stock suffisant au-dessus du seuil', () => {
     expect(getStockStatus(6, 5)).toBe('ok');
+  });
+});
+
+describe('getStockText', () => {
+  it('assemble le libellé du statut et la quantité', () => {
+    expect(getStockText('ok', 25)).toBe('En stock · 25');
+    expect(getStockText('low', 3)).toBe('Stock bas · 3');
+    expect(getStockText('out', 0)).toBe('Rupture · 0');
   });
 });
