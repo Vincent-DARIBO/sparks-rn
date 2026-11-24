@@ -2,32 +2,27 @@ import * as Updates from 'expo-updates';
 
 import { UpdatesService } from '../UpdatesService';
 
-// Doublure modifiable : chaque test règle les constantes d'expo-updates qu'il veut simuler.
-jest.mock('expo-updates', () => ({ isEnabled: true, isEmbeddedLaunch: true, channel: 'preview' }));
+jest.mock('expo-updates', () => ({
+  checkForUpdateAsync: jest.fn(),
+  fetchUpdateAsync: jest.fn(),
+  reloadAsync: jest.fn(),
+}));
 
-const mockedUpdates = Updates as { isEnabled: boolean; isEmbeddedLaunch: boolean; channel: string | null };
+describe('UpdatesService', () => {
+  it("renvoie si une mise à jour est disponible", async () => {
+    jest.mocked(Updates.checkForUpdateAsync).mockResolvedValue({ isAvailable: false } as never);
 
-// __DEV__ est une constante globale de React Native : on la réécrit sur `globalThis`.
-const setDev = (value: boolean) => Object.assign(globalThis, { __DEV__: value });
-
-describe('UpdatesService.getStatusLabel', () => {
-  afterEach(() => {
-    setDev(false);
+    await expect(UpdatesService.checkForUpdate()).resolves.toBe(false);
   });
 
-  it('affiche « Développement » en développement', () => {
-    setDev(true);
-    expect(UpdatesService.getStatusLabel()).toBe('Développement');
-  });
+  // Chaque méthode transforme l'échec d'expo-updates en UpdatesError, avec son propre code.
+  it.each([
+    ['checkForUpdate', Updates.checkForUpdateAsync, 'check_failed'],
+    ['downloadUpdate', Updates.fetchUpdateAsync, 'download_failed'],
+    ['applyUpdate', Updates.reloadAsync, 'reload_failed'],
+  ] as const)('%s lève une UpdatesError « %s » en cas d’échec', async (method, expoUpdatesFn, code) => {
+    jest.mocked(expoUpdatesFn).mockRejectedValue(new Error('Network request failed'));
 
-  it('affiche la version intégrée et son canal', () => {
-    setDev(false);
-    expect(UpdatesService.getStatusLabel()).toBe('Version intégrée · canal preview');
-  });
-
-  it('remplace un canal vide par « — »', () => {
-    setDev(false);
-    mockedUpdates.channel = '';
-    expect(UpdatesService.getStatusLabel()).toBe('Version intégrée · canal —');
+    await expect(UpdatesService[method]()).rejects.toMatchObject({ name: 'UpdatesError', code });
   });
 });
