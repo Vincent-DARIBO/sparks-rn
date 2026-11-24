@@ -11,6 +11,13 @@ import useProducts from './useProducts';
 
 const LARGE_DATASET_SIZE = 5000;
 
+// Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
+// Fonctions définies HORS du hook : elles ne dépendent de rien du rendu, leur référence ne
+// change donc jamais. Définie DANS le hook, `openProduct` était recréée à chaque rendu :
+// le profiler affichait « Props changed: onPress » sur chaque carte (le `memo` de la carte
+// comparait une nouvelle fonction à l'ancienne) et `renderItem` changeait, donc FlashList
+// re-rendait toutes les cellules. `memo` ne sert à rien si une prop change à chaque rendu.
+const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
 const openNewProduct = () => router.push('/product/new');
 const ignoreQuantityChange = () => {};
 
@@ -20,6 +27,11 @@ export default function useCatalogRoute() {
   // Seul le NOMBRE de favoris est lu ici (sous-titre de l'en-tête).
   const favoritesCount = useFavoritesCount();
   const { adjustQuantity } = useAdjustQuantity();
+  // `deleteProduct` est le `mutate` de TanStack Query : sa référence est stable. On le transmet tel quel.
+  // L'envelopper (`(id) => deleteProduct(id)`) recréait une fonction à chaque rendu : `renderItem` changeait
+  // (c'est une de ses dépendances), FlashList le rappelait pour toutes les cellules, et le profiler affichait
+  // « Props changed: onDelete » sur chaque ligne glissable. Les cartes étaient épargnées par leur `memo`.
+  // Cette cause ne jouait pas en « Démo perfs » : la suppression y vaut `undefined`.
   const { deleteProduct } = useDeleteProduct();
   const [isLargeDataset, setIsLargeDataset] = useState(false);
   // Rechargement demandé par l'UTILISATEUR, et par quel geste : tirage de la liste ou bouton « Réessayer ».
@@ -41,10 +53,6 @@ export default function useCatalogRoute() {
     }
   };
 
-  // Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
-  const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
-  const removeProduct = (id: string) => deleteProduct(id);
-
   // Démo de performances (Module 4) : ces produits n'existent pas sur le serveur, − et + n'y font rien.
   const largeDataset = useMemo(
     () => (isLargeDataset ? generateProducts(LARGE_DATASET_SIZE) : []),
@@ -65,7 +73,7 @@ export default function useCatalogRoute() {
     adjustQuantity: isLargeDataset ? ignoreQuantityChange : adjustQuantity,
     // Même raison que pour − / + : ces produits n'existent pas sur le serveur, et le geste est désactivé
     // (aucune ligne glissable : la liste de 5 000 produits ne coûte rien de plus qu'avant).
-    deleteProduct: isLargeDataset ? undefined : removeProduct,
+    deleteProduct: isLargeDataset ? undefined : deleteProduct,
     openProduct,
     addProduct: openNewProduct,
   };
