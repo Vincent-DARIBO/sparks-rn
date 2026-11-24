@@ -1,6 +1,7 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import useStock from '../hooks/useStock';
+import { useThemedStyles, type Theme } from '../theme';
 import { categoryLabels, type Product } from '../types/product';
 import StockBadge from './StockBadge';
 
@@ -22,6 +23,7 @@ interface ProductCardProps {
  */
 export default function ProductCard(props: ProductCardProps) {
   const { product, isFavorite, onToggleFavorite } = props;
+  const { styles } = useThemedStyles(createStyles);
   const { quantity, status, increment, decrement } = useStock(
     product.quantity,
     product.minQuantity,
@@ -66,58 +68,58 @@ export default function ProductCard(props: ProductCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    gap: 12,
-  },
-  thumbnail: {
-    width: 64,
-    height: 64,
-    borderRadius: 8,
-  },
-  body: {
-    flex: 1, // prend toute la largeur restante entre l'image et l'étoile
-    gap: 4,
-  },
-  brand: {
-    fontSize: 12,
-    color: '#5F6368',
-    textTransform: 'uppercase',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#20232A',
-  },
-  category: {
-    fontSize: 12,
-    color: '#5F6368',
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
-  stepper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#E8F8FD',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepperLabel: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#087EA4',
-  },
-  favorite: {
-    fontSize: 24,
-    color: '#E3A008',
-  },
-});
+const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
+  StyleSheet.create({
+    card: {
+      flexDirection: 'row',
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      borderWidth: StyleSheet.hairlineWidth, // la ligne la plus fine affichable : sépare la carte du fond
+      borderColor: colors.border,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      gap: spacing.md,
+    },
+    thumbnail: {
+      width: 64,
+      height: 64,
+      borderRadius: radius.sm,
+    },
+    body: {
+      flex: 1, // prend toute la largeur restante entre l'image et l'étoile
+      gap: spacing.xs,
+    },
+    brand: {
+      ...typography.overline,
+      color: colors.textMuted,
+    },
+    name: {
+      ...typography.bodyStrong,
+      color: colors.text,
+    },
+    category: {
+      ...typography.caption,
+      color: colors.textMuted,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    stepper: {
+      width: 36,
+      height: 36,
+      borderRadius: radius.pill,
+      backgroundColor: colors.primarySoft,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    stepperLabel: {
+      ...typography.heading,
+      color: colors.primary,
+    },
+    favorite: {
+      ...typography.heading,
+      color: colors.favorite,
+    },
+  });
