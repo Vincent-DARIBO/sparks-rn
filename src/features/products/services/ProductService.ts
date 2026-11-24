@@ -47,6 +47,15 @@ export class ProductService {
       throw toProductError(error, ProductError.updateFailed);
     }
   }
+
+  // DELETE : le serveur répond 200 avec le produit supprimé ; on n'en a plus besoin, donc rien n'est renvoyé.
+  static async remove(id: string): Promise<void> {
+    try {
+      await apiFetch(`/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    } catch (error) {
+      throw toProductError(error, ProductError.deleteFailed);
+    }
+  }
 }
 
 // Traduit toute erreur en AppError, dont le `userMessage` s'affiche tel quel à l'écran.

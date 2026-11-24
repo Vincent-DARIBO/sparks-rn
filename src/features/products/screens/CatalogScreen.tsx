@@ -17,6 +17,8 @@ interface CatalogScreenProps {
   favoritesCount: number;
   onAdjustQuantity: (id: string, delta: number) => void;
   onOpenProduct: (id: string) => void;
+  /** Glisser une carte vers la gauche pour la supprimer. Absent = geste désactivé (démo de performances). */
+  onDeleteProduct?: (id: string) => void;
   /** Démo de performances : bascule entre les produits de départ et 5 000 produits. */
   isLargeDataset: boolean;
   onToggleLargeDataset: (value: boolean) => void;
@@ -36,6 +38,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
     favoritesCount,
     onAdjustQuantity,
     onOpenProduct,
+    onDeleteProduct,
     isLargeDataset,
     onToggleLargeDataset,
     onAddProduct,
@@ -46,7 +49,12 @@ export default function CatalogScreen(props: CatalogScreenProps) {
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
     useCatalog(products, favoritesCount);
-  const { renderItem } = useCatalogRenderItem({ columns, onAdjustQuantity, onOpenProduct });
+  const { renderItem } = useCatalogRenderItem({
+    columns,
+    onAdjustQuantity,
+    onOpenProduct,
+    onDeleteProduct,
+  });
   // Safe areas latérales (paysage avec encoche) : filtres et liste s'en écartent.
   const sidePadding = {
     paddingLeft: theme.spacing.lg + insets.left,

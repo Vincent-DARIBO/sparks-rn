@@ -28,6 +28,7 @@ export default function CatalogRoute() {
     isLargeDataset,
     setIsLargeDataset,
     adjustQuantity,
+    deleteProduct,
     openProduct,
     addProduct,
   } = useCatalogRoute();
@@ -47,6 +48,7 @@ export default function CatalogRoute() {
       products={products}
       favoritesCount={favoritesCount}
       onAdjustQuantity={adjustQuantity}
+      onDeleteProduct={deleteProduct}
       onOpenProduct={openProduct}
       isLargeDataset={isLargeDataset}
       onToggleLargeDataset={setIsLargeDataset}

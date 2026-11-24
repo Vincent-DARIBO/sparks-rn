@@ -36,8 +36,9 @@ export class ApiError extends AppError {
   }
 }
 
-// Méthodes HTTP utilisées par l'application : GET lit, POST crée, PATCH modifie une partie d'une ressource.
-type HttpMethod = 'GET' | 'POST' | 'PATCH';
+// Méthodes HTTP utilisées par l'application : GET lit, POST crée, PATCH modifie une partie d'une ressource,
+// DELETE la supprime.
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 interface ApiRequestOptions {
   method?: HttpMethod;

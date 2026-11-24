@@ -6,6 +6,7 @@ import { getUserMessage } from '@/shared/errors/getUserMessage';
 import { generateProducts } from '../data/generateProducts';
 import { useFavoritesCount } from '../stores/favoritesStore';
 import useAdjustQuantity from './useAdjustQuantity';
+import useDeleteProduct from './useDeleteProduct';
 import useProducts from './useProducts';
 
 const LARGE_DATASET_SIZE = 5000;
@@ -23,6 +24,8 @@ export default function useCatalogRoute() {
   // Seul le NOMBRE de favoris est lu ici (sous-titre de l'en-tête) : chaque carte lit elle-même son étoile.
   const favoritesCount = useFavoritesCount();
   const { adjustQuantity } = useAdjustQuantity();
+  // `mutate` de TanStack Query est stable : il peut servir de dépendance à `renderItem` sans le recréer.
+  const { deleteProduct } = useDeleteProduct();
   const [isLargeDataset, setIsLargeDataset] = useState(false);
   // Rechargement demandé par l'UTILISATEUR, et par quel geste : tirage de la liste ou bouton « Réessayer ».
   // On n'utilise pas `isRefetching` de TanStack Query : il est vrai aussi pour les rechargements
@@ -61,6 +64,9 @@ export default function useCatalogRoute() {
     isLargeDataset,
     setIsLargeDataset,
     adjustQuantity: isLargeDataset ? ignoreQuantityChange : adjustQuantity,
+    // Même raison que pour − / + : ces produits n'existent pas sur le serveur, et le geste est désactivé
+    // (aucune ligne glissable : la liste de 5 000 produits ne coûte rien de plus qu'avant).
+    deleteProduct: isLargeDataset ? undefined : deleteProduct,
     openProduct,
     addProduct: openNewProduct,
   };
