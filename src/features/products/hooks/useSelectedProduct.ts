@@ -4,7 +4,7 @@ import type { Product } from '../types';
 
 /**
  * Navigation minimale par état local : `null` = catalogue affiché,
- * un identifiant = fiche de ce produit affichée. Remplacé par Expo Router au Module 5.
+ * un identifiant = fiche de ce produit affichée. Remplacé par une route Expo Router au ticket SCAN-09.
  */
 export default function useSelectedProduct(products: Product[]) {
   const [selectedId, setSelectedId] = useState<string | null>(null);

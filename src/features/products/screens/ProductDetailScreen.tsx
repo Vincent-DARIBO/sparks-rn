@@ -79,8 +79,11 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
         </View>
       </ScrollView>
 
-      {/* Hors de la ScrollView : la barre reste fixe en bas, au-dessus de la barre d'accueil iOS */}
-      <View style={[styles.actionBar, sidePadding, { paddingBottom: theme.spacing.md + insets.bottom }]}>
+      {/*
+        Hors de la ScrollView : la barre reste fixe en bas. La fiche s'affiche dans l'onglet
+        Catalogue : la barre d'onglets réserve déjà la zone de la barre d'accueil iOS.
+      */}
+      <View style={[styles.actionBar, sidePadding, { paddingBottom: theme.spacing.md }]}>
         <Pressable style={[styles.button, styles.buttonSecondary]} onPress={reset}>
           <Text style={[styles.buttonLabel, styles.buttonLabelSecondary]}>Annuler</Text>
         </Pressable>
