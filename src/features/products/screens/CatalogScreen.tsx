@@ -89,8 +89,9 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         contentContainerStyle={{
           paddingLeft: sidePadding.paddingLeft - cellSideOffset,
           paddingRight: sidePadding.paddingRight - cellSideOffset,
-          // Safe area basse : la dernière carte passe au-dessus de la barre d'accueil iOS.
-          paddingBottom: theme.spacing.lg + insets.bottom,
+          // Pas d'inset bas ici : la barre d'onglets, juste en dessous, réserve déjà
+          // la place de la barre d'accueil iOS. L'ajouter doublerait l'espace vide.
+          paddingBottom: theme.spacing.lg,
         }}
         // Clavier : il se ferme quand on fait défiler, et un appui sur une
         // carte fonctionne du premier coup même clavier ouvert.
