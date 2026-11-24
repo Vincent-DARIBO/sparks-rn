@@ -38,7 +38,13 @@ export default function Header(props: HeaderProps) {
         {left}
         <View style={styles.texts}>
           {/* numberOfLines : un nom de produit trop long est tronqué au lieu de pousser l'en-tête */}
-          <Text style={styles.title} numberOfLines={1}>
+          {/* Rôle « header » : le lecteur d'écran annonce « titre » et permet de naviguer de titre en titre. */}
+          <Text
+            style={styles.title}
+            numberOfLines={1}
+            accessibilityRole="header"
+            maxFontSizeMultiplier={TITLE_MAX_FONT_SCALE}
+          >
             {title}
           </Text>
           {/* Rendu conditionnel : rien n'est affiché si subtitle est absent */}
@@ -49,6 +55,9 @@ export default function Header(props: HeaderProps) {
     </View>
   );
 }
+
+// Le titre tient sur UNE ligne, à côté du bouton retour : au-delà de 1,3 (28 pt → 36 pt) il serait tronqué.
+const TITLE_MAX_FONT_SCALE = 1.3;
 
 // Fonction définie hors du composant : sa référence est stable, les styles
 // ne sont recréés que lorsque le thème change.

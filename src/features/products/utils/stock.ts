@@ -1,4 +1,4 @@
-import type { StockStatus } from '../types';
+import { MAX_QUANTITY, type StockStatus } from '../types';
 
 /**
  * Calcule l'état du stock. Fonction pure : mêmes entrées → même sortie,
@@ -10,7 +10,12 @@ export function getStockStatus(quantity: number, minQuantity: number): StockStat
   return 'ok';
 }
 
-const stockStatusLabels: Record<StockStatus, string> = {
+/** Garde une quantité entre 0 et MAX_QUANTITY : une valeur hors bornes serait refusée par la validation Zod. */
+export function clampQuantity(quantity: number): number {
+  return Math.min(MAX_QUANTITY, Math.max(0, quantity));
+}
+
+export const stockStatusLabels: Record<StockStatus, string> = {
   out: 'Rupture',
   low: 'Stock bas',
   ok: 'En stock',

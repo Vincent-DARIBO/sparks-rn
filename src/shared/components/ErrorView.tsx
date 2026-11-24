@@ -77,6 +77,7 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
     message: { ...typography.body, color: colors.text, textAlign: 'center' },
     messageCompact: { ...typography.caption, flex: 1, textAlign: 'left' },
     button: {
+      minHeight: 44, // zone tactile minimale, y compris en version compacte
       flexDirection: 'row',
       alignItems: 'center',
       gap: spacing.sm,

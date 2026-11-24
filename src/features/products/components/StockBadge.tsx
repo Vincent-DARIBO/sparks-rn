@@ -4,7 +4,8 @@ import Animated from 'react-native-reanimated';
 import usePopOnChange from '@/shared/hooks/usePopOnChange';
 import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
 import type { StockStatus } from '../types';
-import { getStockText } from '../utils/stock';
+import { formatUnits } from '../utils/productAccessibility';
+import { getStockText, stockStatusLabels } from '../utils/stock';
 
 interface StockBadgeProps {
   status: StockStatus;
@@ -26,6 +27,8 @@ const badgeColors: Record<StockStatus, keyof ColorTokens> = {
   ok: 'success',
 };
 
+const BADGE_MAX_FONT_SCALE = 1.6;
+
 export default function StockBadge(props: StockBadgeProps) {
   const { status, quantity, productId } = props;
   const { theme, styles } = useThemedStyles(createStyles);
@@ -36,8 +39,16 @@ export default function StockBadge(props: StockBadgeProps) {
   return (
     // Tableau de styles : le style statique, puis la partie dynamique, puis le style animé.
     // `Animated.View` : une View dont le style peut être piloté depuis le thread UI.
-    <Animated.View style={[styles.badge, { backgroundColor: theme.colors[color] }, popStyle]}>
-      <Text style={styles.label}>{getStockText(status, quantity)}</Text>
+    // Lecteur d'écran : « Stock bas, 6 unités » plutôt que « Stock bas point médian 6 ».
+    <Animated.View
+      style={[styles.badge, { backgroundColor: theme.colors[color] }, popStyle]}
+      accessible
+      accessibilityLabel={`${stockStatusLabels[status]}, ${formatUnits(quantity)}`}
+    >
+      {/* Texte agrandi par le système : le badge grandit, mais plafonné pour ne pas casser la carte. */}
+      <Text style={styles.label} maxFontSizeMultiplier={BADGE_MAX_FONT_SCALE}>
+        {getStockText(status, quantity)}
+      </Text>
     </Animated.View>
   );
 }

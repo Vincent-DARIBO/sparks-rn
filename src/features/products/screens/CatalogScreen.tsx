@@ -70,8 +70,14 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         title="Scan'Stock"
         subtitle={favoritesLabel}
         right={
-          // Icône de 28 + hitSlop de 8 de chaque côté = 44 pt, la taille minimale recommandée.
-          <Pressable onPress={onAddProduct} hitSlop={8} accessibilityRole="button" accessibilityLabel="Ajouter un produit">
+          // Zone de 44 × 44 pt (taille minimale recommandée) autour de l'icône de 28 ; la marge négative
+          // compense les 8 pt ajoutés de chaque côté : l'icône reste à sa place.
+          <Pressable
+            onPress={onAddProduct}
+            style={styles.addButton}
+            accessibilityRole="button"
+            accessibilityLabel="Ajouter un produit"
+          >
             <Ionicons name="add" size={28} color={theme.colors.onHeader} />
           </Pressable>
         }
@@ -136,6 +142,7 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
       flex: 1,
       backgroundColor: colors.background,
     },
+    addButton: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
     filters: {
       paddingTop: spacing.lg,
       // Bande libre sous les pastilles : la liste est coupée à son bord supérieur,

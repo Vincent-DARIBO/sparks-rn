@@ -51,7 +51,8 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
   } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
-  const { quantity, status, increment, decrement, reset } = useProductQuantity(product, onAdjustQuantity);
+  const { quantity, status, increment, decrement, reset, quantityAccessibilityValue, handleQuantityAccessibilityAction } =
+    useProductQuantity(product, onAdjustQuantity);
   // Le grand nombre pulse plus fort (1.3) que le badge (1.15 par défaut).
   const quantityPopStyle = usePopOnChange(quantity, product.id, 1.3);
   // En paysage, l'encoche passe sur un côté : contenu et barre d'actions s'en écartent.
@@ -92,21 +93,39 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(200).duration(300)} style={[styles.section, styles.stockSection]}>
-          <Text style={styles.sectionTitle}>Stock</Text>
+          <Text style={styles.sectionTitle} accessibilityRole="header">
+            Stock
+          </Text>
           <StockBadge status={status} quantity={quantity} productId={product.id} />
           <View style={styles.stockRow}>
             <Pressable
               style={styles.stepper}
               onPress={decrement}
               disabled={quantity === 0}
+              accessibilityRole="button"
               accessibilityLabel="Retirer une unité"
             >
-              <Text style={styles.stepperLabel}>−</Text>
+              <Text style={styles.stepperLabel} maxFontSizeMultiplier={STEPPER_MAX_FONT_SCALE}>
+                −
+              </Text>
             </Pressable>
             <Animated.Text
               // Identifiant stable pour le scénario Maestro : le nombre seul est ambigu.
               testID="product-quantity"
               style={[styles.quantity, quantityPopStyle]}
+              // Accessibilité : « Quantité en stock, 24 unités, réglable ». Le rôle `adjustable` permet
+              // de balayer vers le haut (+1) ou le bas (−1) ; les boutons − et + restent des boutons à part.
+              accessible
+              accessibilityRole="adjustable"
+              accessibilityLabel="Quantité en stock"
+              accessibilityValue={quantityAccessibilityValue}
+              accessibilityActions={[
+                { name: 'increment', label: 'Ajouter une unité' },
+                { name: 'decrement', label: 'Retirer une unité' },
+              ]}
+              onAccessibilityAction={handleQuantityAccessibilityAction}
+              // Très grand texte : le nombre fait déjà 40 pt, on plafonne pour qu'il reste entre − et +.
+              maxFontSizeMultiplier={QUANTITY_MAX_FONT_SCALE}
             >
               {quantity}
             </Animated.Text>
@@ -114,9 +133,12 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
               style={styles.stepper}
               onPress={increment}
               disabled={quantity >= MAX_QUANTITY}
+              accessibilityRole="button"
               accessibilityLabel="Ajouter une unité"
             >
-              <Text style={styles.stepperLabel}>+</Text>
+              <Text style={styles.stepperLabel} maxFontSizeMultiplier={STEPPER_MAX_FONT_SCALE}>
+                +
+              </Text>
             </Pressable>
           </View>
         </Animated.View>
@@ -127,16 +149,31 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
         affichée par-dessus les onglets : c'est à elle de s'écarter de la barre d'accueil iOS.
       */}
       <View style={[styles.actionBar, sidePadding, { paddingBottom: theme.spacing.md + insets.bottom }]}>
-        <Pressable style={[styles.button, styles.buttonSecondary]} onPress={reset}>
-          <Text style={[styles.buttonLabel, styles.buttonLabelSecondary]}>Annuler</Text>
+        <Pressable style={[styles.button, styles.buttonSecondary]} onPress={reset} accessibilityRole="button">
+          <Text style={[styles.buttonLabel, styles.buttonLabelSecondary]} maxFontSizeMultiplier={ACTION_BAR_MAX_FONT_SCALE}>
+            Annuler
+          </Text>
         </Pressable>
-        <Pressable style={styles.button} onPress={() => onToggleFavorite(product.id)}>
-          <Text style={styles.buttonLabel}>{isFavorite ? '★ Favori' : '☆ Ajouter aux favoris'}</Text>
+        <Pressable
+          style={styles.button}
+          onPress={() => onToggleFavorite(product.id)}
+          accessibilityRole="button"
+          accessibilityLabel={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        >
+          <Text style={styles.buttonLabel} maxFontSizeMultiplier={ACTION_BAR_MAX_FONT_SCALE}>
+            {isFavorite ? '★ Favori' : '☆ Ajouter aux favoris'}
+          </Text>
         </Pressable>
       </View>
     </View>
   );
 }
+
+// Plafonds du texte agrandi par le système (réglage « Taille du texte ») : le texte grandit,
+// mais pas au point de déborder de son cercle ou de son bouton, dont la largeur est limitée.
+const QUANTITY_MAX_FONT_SCALE = 1.3;
+const STEPPER_MAX_FONT_SCALE = 1.3;
+const ACTION_BAR_MAX_FONT_SCALE = 1.3;
 
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
@@ -171,8 +208,11 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: colors.border,
     },
+    // minHeight 44 : zone tactile minimale, même avec un texte court.
     button: {
       flex: 1,
+      minHeight: 44,
+      justifyContent: 'center',
       backgroundColor: colors.primary,
       borderRadius: radius.md,
       paddingVertical: spacing.md,

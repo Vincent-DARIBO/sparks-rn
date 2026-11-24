@@ -178,5 +178,5 @@ const createStyles = ({ colors, spacing }: Theme) =>
     group: { gap: spacing.sm },
     groupLabel: { fontSize: 14, fontWeight: '600', color: colors.text },
     error: { fontSize: 13, color: colors.danger },
-    steppers: { flexDirection: 'row', gap: spacing.md },
+    steppers: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   });

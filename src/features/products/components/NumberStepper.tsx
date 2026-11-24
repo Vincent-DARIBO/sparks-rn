@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
 
@@ -21,11 +21,12 @@ interface NumberStepperProps {
 export default function NumberStepper(props: NumberStepperProps) {
   const { label, value, onChange, error, max = Infinity } = props;
   const { styles } = useThemedStyles(createStyles);
+  const { fontScale } = useWindowDimensions();
   const isAtMinimum = value <= 0;
   const isAtMaximum = value >= max;
 
   return (
-    <View style={[styles.box, error ? styles.boxError : null]}>
+    <View style={[styles.box, { flexBasis: BOX_BASE_WIDTH * fontScale }, error ? styles.boxError : null]}>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.row}>
         <Pressable
@@ -36,7 +37,9 @@ export default function NumberStepper(props: NumberStepperProps) {
           accessibilityLabel={`Diminuer : ${label}`}
           accessibilityState={{ disabled: isAtMinimum }}
         >
-          <Text style={styles.buttonLabel}>−</Text>
+          <Text style={styles.buttonLabel} maxFontSizeMultiplier={GLYPH_MAX_FONT_SCALE}>
+            −
+          </Text>
         </Pressable>
         <Text style={styles.value} accessibilityLabel={`${label} : ${value}`}>
           {value}
@@ -49,7 +52,9 @@ export default function NumberStepper(props: NumberStepperProps) {
           accessibilityLabel={`Augmenter : ${label}`}
           accessibilityState={{ disabled: isAtMaximum }}
         >
-          <Text style={styles.buttonLabel}>+</Text>
+          <Text style={styles.buttonLabel} maxFontSizeMultiplier={GLYPH_MAX_FONT_SCALE}>
+            +
+          </Text>
         </Pressable>
       </View>
       {error ? (
@@ -61,10 +66,18 @@ export default function NumberStepper(props: NumberStepperProps) {
   );
 }
 
+// Largeur de départ d'une carte (− 12 + tient dedans) ; elle suit la taille du texte : au repos deux cartes
+// tiennent côte à côte (2 × 160 + 12 < 343 pt), avec un très grand texte la seconde passe dessous.
+const BOX_BASE_WIDTH = 160;
+
+// Le glyphe doit rester dans son cercle de 44 pt.
+const GLYPH_MAX_FONT_SCALE = 1.3;
+
 const createStyles = ({ colors, spacing, radius }: Theme) =>
   StyleSheet.create({
     box: {
-      flex: 1,
+      flexGrow: 1,
+      maxWidth: '100%', // avec un très grand texte, la largeur de départ ne doit pas dépasser l'écran
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,

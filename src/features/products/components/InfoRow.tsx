@@ -22,7 +22,8 @@ export default function InfoRow(props: InfoRowProps) {
 
 const createStyles = ({ colors, spacing, typography }: Theme) =>
   StyleSheet.create({
-    infoRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
+    // flexWrap : avec un très grand texte, la valeur passe sous le libellé au lieu d'être écrasée.
+    infoRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: spacing.md },
     infoLabel: { ...typography.body, color: colors.textMuted },
-    infoValue: { ...typography.bodyStrong, color: colors.text, flexShrink: 1, textAlign: 'right' },
+    infoValue: { ...typography.bodyStrong, color: colors.text, flexShrink: 1, marginLeft: 'auto', textAlign: 'right' },
   });

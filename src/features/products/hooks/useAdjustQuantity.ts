@@ -4,7 +4,8 @@ import { useCallback } from 'react';
 import type { MutationCallbacks } from '@/shared/types/MutationCallbacks';
 
 import { ProductService } from '../services/ProductService';
-import { MAX_QUANTITY, type Product } from '../types';
+import type { Product } from '../types';
+import { clampQuantity } from '../utils/stock';
 import { productKeys } from './productKeys';
 
 const ADJUST_QUANTITY_KEY = [...productKeys.all, 'adjust-quantity'] as const;
@@ -88,9 +89,9 @@ export default function useAdjustQuantity({ onSuccess, onError }: MutationCallba
       // Valeur la plus récente du cache (elle inclut les appuis précédents encore en vol).
       const current = getCachedProduct(queryClient, id);
       if (!current) return;
-      // Bornée entre 0 et MAX_QUANTITY, comme dans le formulaire : une valeur hors bornes serait
+      // Bornée, comme dans le formulaire : une valeur hors bornes serait
       // enregistrée par le serveur puis refusée par notre validation Zod au retour.
-      const quantity = Math.min(MAX_QUANTITY, Math.max(0, current.quantity + delta));
+      const quantity = clampQuantity(current.quantity + delta);
       if (quantity === current.quantity) return;
       mutate({ id, quantity });
     },

@@ -12,7 +12,7 @@ export default function BackButton(props: BackButtonProps) {
   const { styles } = useThemedStyles(createStyles);
 
   return (
-    <Pressable onPress={onPress} hitSlop={12} accessibilityLabel="Retour au catalogue">
+    <Pressable onPress={onPress} style={styles.button} accessibilityRole="button" accessibilityLabel="Retour au catalogue">
       <Text style={styles.back}>‹</Text>
     </Pressable>
   );
@@ -20,5 +20,7 @@ export default function BackButton(props: BackButtonProps) {
 
 const createStyles = ({ colors }: Theme) =>
   StyleSheet.create({
+    // Le « ‹ » seul ne fait qu'environ 13 pt de large : on lui donne une zone de 44 × 44 pt.
+    button: { minWidth: 44, minHeight: 44, justifyContent: 'center' },
     back: { fontSize: 36, lineHeight: 36, color: colors.onHeader },
   });

@@ -27,7 +27,6 @@ export default function LocationRow(props: LocationRowProps) {
             onPress={() => onOpenLocation(location)}
             accessibilityRole="link"
             accessibilityHint="Affiche cet emplacement dans Google Maps"
-            hitSlop={12} // zone tactile d'au moins 44 pt sans agrandir le texte
             style={styles.address}
           >
             <Text style={[styles.value, styles.link]}>{location.label}</Text>
@@ -49,7 +48,7 @@ export default function LocationRow(props: LocationRowProps) {
         ) : (
           <Ionicons name="location-outline" size={18} color={theme.colors.primary} />
         )}
-        <Text style={styles.link}>{buttonLabel}</Text>
+        <Text style={[styles.link, styles.buttonText]}>{buttonLabel}</Text>
       </Pressable>
     </>
   );
@@ -57,11 +56,16 @@ export default function LocationRow(props: LocationRowProps) {
 
 const createStyles = ({ colors, spacing, typography }: Theme) =>
   StyleSheet.create({
-    row: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
+    // flexWrap : avec un très grand texte, l'adresse passe sous le libellé au lieu d'être écrasée.
+    row: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: spacing.md },
     label: { ...typography.body, color: colors.textMuted },
-    address: { flexShrink: 1 },
+    // Zone tactile de 44 pt de haut (le texte en fait environ 19) ; la marge négative de 12 pt
+    // en haut et en bas évite d'agrandir la ligne. `marginLeft: 'auto'` garde l'adresse à droite.
+    address: { flexShrink: 1, minHeight: 44, justifyContent: 'center', marginVertical: -12, marginLeft: 'auto' },
     value: { ...typography.bodyStrong, color: colors.text, textAlign: 'right' },
     link: { ...typography.bodyStrong, color: colors.primary },
     muted: { color: colors.textMuted, fontWeight: '400' },
-    button: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, minHeight: 44 },
+    // flexWrap + flexShrink : avec un très grand texte, le libellé passe sous l'icône et prend toute la largeur.
+    button: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.sm, minHeight: 44 },
+    buttonText: { flexShrink: 1 },
   });

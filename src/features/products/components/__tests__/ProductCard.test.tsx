@@ -37,8 +37,9 @@ describe('ProductCard', () => {
     );
     const rendersBefore = { ...renders };
 
+    // Les petites étoiles sont masquées au lecteur d'écran (SCAN-26) : on les atteint comme au doigt.
     const user = userEvent.setup();
-    await user.press(screen.getAllByLabelText('Ajouter aux favoris')[0]);
+    await user.press(screen.getAllByLabelText('Ajouter aux favoris', { includeHiddenElements: true })[0]);
 
     expect(renders['1']).toBe(rendersBefore['1'] + 1);
     expect(renders['2']).toBe(rendersBefore['2']);

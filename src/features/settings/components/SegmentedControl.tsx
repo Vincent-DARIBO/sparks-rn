@@ -29,13 +29,18 @@ export default function SegmentedControl<T extends string>(props: SegmentedContr
             accessibilityState={{ checked: isSelected }}
             style={[styles.segment, isSelected && styles.segmentSelected]}
           >
-            <Text style={[styles.label, isSelected && styles.labelSelected]}>{option.label}</Text>
+            <Text style={[styles.label, isSelected && styles.labelSelected]} maxFontSizeMultiplier={SEGMENT_MAX_FONT_SCALE}>
+              {option.label}
+            </Text>
           </Pressable>
         );
       })}
     </View>
   );
 }
+
+// Trois segments se partagent la largeur : au-delà de 1,3, « Système » est coupé en deux.
+const SEGMENT_MAX_FONT_SCALE = 1.3;
 
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
