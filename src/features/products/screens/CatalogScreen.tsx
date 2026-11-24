@@ -1,13 +1,12 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { StyleSheet, Text, View } from 'react-native';
 
 import Header from '@/shared/components/Header';
+import CatalogListHeader from '../components/CatalogListHeader';
 import CategoryChips from '../components/CategoryChips';
-import ProductCard from '../components/ProductCard';
 import SearchBar from '../components/SearchBar';
-import StatTile from '@/shared/components/StatTile';
-import useHomeLayout from '../hooks/useHomeLayout';
-import useProductFilters from '../hooks/useProductFilters';
-import useStockStats from '../hooks/useStockStats';
+import useCatalog from '../hooks/useCatalog';
+import useCatalogRenderItem from '../hooks/useCatalogRenderItem';
 import { useThemedStyles, type Theme } from '@/theme';
 import type { Product } from '../types';
 
@@ -15,23 +14,44 @@ interface CatalogScreenProps {
   products: Product[];
   isFavorite: (id: string) => boolean;
   onToggleFavorite: (id: string) => void;
+  favoritesCount: number;
   onAdjustQuantity: (id: string, delta: number) => void;
-  favoritesLabel: string;
   onOpenProduct: (id: string) => void;
+  /** Démo de performances : bascule entre les produits de départ et 5 000 produits. */
+  isLargeDataset: boolean;
+  onToggleLargeDataset: (value: boolean) => void;
 }
 
-/** Écran d'accueil : recherche, filtres, tuiles de statistiques et liste responsive du catalogue. */
+/** Écran d'accueil : recherche, filtres, tuiles de statistiques et catalogue en FlashList. */
 export default function CatalogScreen(props: CatalogScreenProps) {
-  const { products, isFavorite, onToggleFavorite, onAdjustQuantity, favoritesLabel, onOpenProduct } = props;
+  const {
+    products,
+    isFavorite,
+    onToggleFavorite,
+    favoritesCount,
+    onAdjustQuantity,
+    onOpenProduct,
+    isLargeDataset,
+    onToggleLargeDataset,
+  } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const { insets, columns, cardWidth } = useHomeLayout();
-  const { totalCount, lowCount, outCount } = useStockStats(products);
-  const { query, setQuery, category, setCategory, filtered } = useProductFilters(products);
+  const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
+    useCatalog(products, favoritesCount);
+  const { renderItem } = useCatalogRenderItem({
+    columns,
+    isFavorite,
+    onToggleFavorite,
+    onAdjustQuantity,
+    onOpenProduct,
+  });
   // Safe areas latérales (paysage avec encoche) : filtres et liste s'en écartent.
   const sidePadding = {
     paddingLeft: theme.spacing.lg + insets.left,
     paddingRight: theme.spacing.lg + insets.right,
   };
+  // En deux colonnes, chaque cellule ajoute une demi-marge de chaque côté : on la retire ici
+  // pour que les cartes restent alignées sur les filtres.
+  const cellSideOffset = columns > 1 ? theme.spacing.md / 2 : 0;
 
   return (
     <View style={styles.screen}>
@@ -43,44 +63,35 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         <CategoryChips value={category} onChange={setCategory} />
       </View>
 
-      {/* FlatList est virtualisée : seules les cartes proches de l'écran sont rendues */}
-      <FlatList
+      {/*
+        FlashList RECYCLE les cellules : une cellule sortie de l'écran est réutilisée
+        pour un autre produit. Un état local dans la carte suivrait donc la cellule,
+        pas le produit : la quantité vient de l'inventaire (useInventory).
+      */}
+      <FlashList
         data={filtered}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            isFavorite={isFavorite(item.id)}
-            onToggleFavorite={onToggleFavorite}
-            onAdjustQuantity={onAdjustQuantity}
-            onPress={onOpenProduct}
-            style={{ width: cardWidth }}
-          />
-        )}
+        renderItem={renderItem}
         numColumns={columns}
-        // FlatList ne sait pas changer de nombre de colonnes à la volée :
-        // une nouvelle `key` la reconstruit (rotation, tablette).
+        // Changer de nombre de colonnes : une nouvelle `key` reconstruit la liste (rotation, tablette).
         key={columns}
-        // Espace entre les deux colonnes ; refusé par FlatList quand il n'y a qu'une colonne.
-        columnWrapperStyle={columns > 1 ? styles.columnRow : undefined}
         // En-tête de liste : les tuiles et le titre défilent avec les cartes.
         ListHeaderComponent={
-          <View style={styles.listHeader}>
-            <View style={styles.statsRow}>
-              <StatTile label="Produits" value={totalCount} />
-              <StatTile label="Stock bas" value={lowCount} tone="warning" />
-              <StatTile label="Ruptures" value={outCount} tone="danger" />
-            </View>
-            <Text style={styles.sectionTitle}>Catalogue</Text>
-          </View>
+          <CatalogListHeader
+            stats={stats}
+            isLargeDataset={isLargeDataset}
+            onToggleLargeDataset={onToggleLargeDataset}
+          />
         }
+        // L'en-tête n'est pas une cellule : il récupère la demi-marge retirée ci-dessous.
+        ListHeaderComponentStyle={{ paddingHorizontal: cellSideOffset }}
         ListEmptyComponent={<Text style={styles.empty}>Aucun produit ne correspond à votre recherche.</Text>}
-        contentContainerStyle={[
-          styles.content,
-          sidePadding,
+        contentContainerStyle={{
+          paddingLeft: sidePadding.paddingLeft - cellSideOffset,
+          paddingRight: sidePadding.paddingRight - cellSideOffset,
           // Safe area basse : la dernière carte passe au-dessus de la barre d'accueil iOS.
-          { paddingBottom: theme.spacing.lg + insets.bottom },
-        ]}
+          paddingBottom: theme.spacing.lg + insets.bottom,
+        }}
         // Clavier : il se ferme quand on fait défiler, et un appui sur une
         // carte fonctionne du premier coup même clavier ouvert.
         keyboardDismissMode="on-drag"
@@ -103,25 +114,6 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
       paddingBottom: spacing.sm,
       gap: spacing.md,
       backgroundColor: colors.background,
-    },
-    content: {
-      gap: spacing.md, // espace entre les rangées de cartes
-    },
-    listHeader: {
-      // Avec la bande sous les filtres (spacing.sm), l'écart total reste spacing.lg.
-      paddingTop: spacing.lg - spacing.sm,
-      gap: spacing.lg,
-    },
-    statsRow: {
-      flexDirection: 'row', // ⚠️ en React Native, la direction par défaut est 'column'
-      gap: spacing.md,
-    },
-    sectionTitle: {
-      ...typography.heading,
-      color: colors.text,
-    },
-    columnRow: {
-      gap: spacing.md,
     },
     empty: {
       ...typography.body,

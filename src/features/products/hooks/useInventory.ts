@@ -21,5 +21,8 @@ export default function useInventory(initialProducts: Product[]) {
     );
   }, []);
 
-  return { products, adjustQuantity };
+  // Remplace tout le catalogue (démo de performances : 12 ↔ 5 000 produits).
+  const replaceAll = useCallback((nextProducts: Product[]) => setProducts(nextProducts), []);
+
+  return { products, adjustQuantity, replaceAll };
 }
