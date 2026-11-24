@@ -2,6 +2,8 @@ import Constants from 'expo-constants';
 
 import { useSettingsStore, type ThemeMode } from '@/shared/stores/settingsStore';
 
+import { UpdatesService } from '../services/UpdatesService';
+
 export const themeOptions: { value: ThemeMode; label: string }[] = [
   { value: 'system', label: 'Système' },
   { value: 'light', label: 'Clair' },
@@ -11,6 +13,8 @@ export const themeOptions: { value: ThemeMode; label: string }[] = [
 // « 58.0.0 » → « 58 ». Lue dans la configuration de l'app (app.json + package.json) au moment du build.
 const sdkMajorVersion = Constants.expoConfig?.sdkVersion?.split('.')[0] ?? '—';
 const versionLabel = `${Constants.expoConfig?.version ?? '—'} · SDK ${sdkMajorVersion}`;
+
+const updateLabel = UpdatesService.getStatusLabel();
 
 /**
  * Hook de l'écran Réglages. Chaque changement est enregistré immédiatement (`persist`).
@@ -32,5 +36,6 @@ export default function useSettings() {
     openAfterScan,
     setOpenAfterScan,
     versionLabel,
+    updateLabel,
   };
 }

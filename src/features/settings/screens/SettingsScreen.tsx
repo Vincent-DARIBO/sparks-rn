@@ -13,8 +13,16 @@ import useSettings, { themeOptions } from '../hooks/useSettings';
 /** Écran Réglages de la maquette : Apparence, Scanner, Général. */
 export default function SettingsScreen() {
   const { theme, styles } = useThemedStyles(createStyles);
-  const { themeMode, setThemeMode, vibrateOnScan, setVibrateOnScan, openAfterScan, setOpenAfterScan, versionLabel } =
-    useSettings();
+  const {
+    themeMode,
+    setThemeMode,
+    vibrateOnScan,
+    setVibrateOnScan,
+    openAfterScan,
+    setOpenAfterScan,
+    versionLabel,
+    updateLabel,
+  } = useSettings();
   const insets = useSafeAreaInsets();
   // En paysage, l'encoche passe sur un côté : le contenu s'en écarte.
   const sidePadding = {
@@ -52,8 +60,11 @@ export default function SettingsScreen() {
               <Ionicons name="chevron-forward" size={16} color={theme.colors.textMuted} />
             </View>
           </SettingsRow>
-          <SettingsRow label="Version">
+          <SettingsRow label="Version" hasSeparator>
             <Text style={styles.valueText}>{versionLabel}</Text>
+          </SettingsRow>
+          <SettingsRow label="Mise à jour">
+            <Text style={styles.valueText}>{updateLabel}</Text>
           </SettingsRow>
         </SettingsSection>
       </ScrollView>
