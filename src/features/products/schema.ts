@@ -47,8 +47,21 @@ export const productSchema = z.object({
 // à partir du schéma. Ajouter un champ au schéma l'ajoute au type, sans rien écrire à la main.
 export type ProductFormValues = z.infer<typeof productSchema>;
 
+const locationSchema = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+  label: z.string(),
+  recordedAt: z.string(),
+});
+
 // Un produit renvoyé par le serveur = un produit de formulaire + l'identifiant généré par le serveur.
-export const apiProductSchema = productSchema.extend({ id: z.string() });
+// La photo et l'emplacement ne sont PAS des champs du formulaire : facultatifs, ils n'existent
+// que sur les produits déjà photographiés ou localisés.
+export const apiProductSchema = productSchema.extend({
+  id: z.string(),
+  photoUri: z.string().optional(),
+  location: locationSchema.optional(),
+});
 
 // Validation de la liste complète : une réponse mal formée lève une erreur au lieu de polluer le cache.
 export const apiProductListSchema = z.array(apiProductSchema);

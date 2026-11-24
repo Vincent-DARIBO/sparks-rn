@@ -53,7 +53,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
           accessibilityLabel={`Ouvrir la fiche de ${product.name}`}
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
-          <ProductThumbnail size={THUMBNAIL_SIZE} />
+          <ProductThumbnail size={THUMBNAIL_SIZE} photoUri={product.photoUri} />
 
           <View style={styles.body}>
             <Text style={styles.brand}>{product.brand}</Text>

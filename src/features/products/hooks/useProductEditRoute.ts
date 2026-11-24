@@ -9,7 +9,14 @@ import useProduct from './useProduct';
 import useUpdateProduct from './useUpdateProduct';
 
 // On sépare l'identifiant (non modifiable) des champs du formulaire.
-function toFormValues({ id: _productId, ...formValues }: Product): ProductFormValues {
+// Photo et emplacement ne sont pas non plus des champs du formulaire : on les écarte, ils restent
+// sur le serveur (le PATCH n'envoie que les champs du formulaire).
+function toFormValues({
+  id: _productId,
+  photoUri: _photoUri,
+  location: _location,
+  ...formValues
+}: Product): ProductFormValues {
   return formValues;
 }
 

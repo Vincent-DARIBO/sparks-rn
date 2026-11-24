@@ -30,9 +30,27 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Scan’Stock utilise l’appareil photo pour lire les codes-barres. Aucune image n’est enregistrée.",
+          "cameraPermission": "Scan’Stock utilise l’appareil photo pour lire les codes-barres et photographier les produits.",
           "microphonePermission": false,
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Scan’Stock accède à vos photos pour illustrer les produits.",
+          "cameraPermission": "Scan’Stock utilise l’appareil photo pour lire les codes-barres et photographier les produits.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Scan’Stock utilise votre position pour enregistrer l’emplacement de stockage d’un produit.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false,
+          "locationFullAccuracyPermission": false,
+          "motionUsagePermission": false
         }
       ]
     ],

@@ -6,10 +6,12 @@ import { isNotFoundError } from '@/shared/errors/isNotFoundError';
 import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
 import useAdjustQuantity from './useAdjustQuantity';
 import useProduct from './useProduct';
+import useProductLocation from './useProductLocation';
+import useProductPhoto from './useProductPhoto';
 
 /**
  * Logique de la route `/product/[id]` : lecture du paramètre d'URL,
- * produit chargé depuis l'API, favoris, retour.
+ * produit chargé depuis l'API, favoris, photo, emplacement, retour.
  */
 export default function useProductDetailRoute() {
   // Les paramètres d'URL sont TOUJOURS des chaînes (ou des tableaux de chaînes).
@@ -19,6 +21,8 @@ export default function useProductDetailRoute() {
   const isFavorite = useIsFavorite(id);
   const toggleFavorite = useToggleFavorite();
   const { adjustQuantity } = useAdjustQuantity();
+  const { choosePhoto, isSavingPhoto } = useProductPhoto(id);
+  const { recordCurrentLocation, openLocation, isLocating } = useProductLocation(id);
 
   // Si l'écran a été ouvert par un lien profond, l'historique est vide :
   // on retombe alors sur le catalogue.
@@ -34,6 +38,11 @@ export default function useProductDetailRoute() {
     isFavorite,
     toggleFavorite,
     adjustQuantity,
+    choosePhoto,
+    isSavingPhoto,
+    recordCurrentLocation,
+    openLocation,
+    isLocating,
     goBack,
   };
 }

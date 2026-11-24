@@ -4,7 +4,7 @@ import { ApiError, apiFetch } from '@/shared/api/client';
 import { AppError } from '@/shared/errors/AppError';
 
 import { apiProductListSchema, apiProductSchema, type ProductFormValues } from '../schema';
-import type { Product } from '../types';
+import type { Product, ProductPatch } from '../types';
 import { ProductError } from './ProductError';
 
 // Appels REST des produits. Aucune logique d'affichage ni de cache ici :
@@ -37,8 +37,8 @@ export class ProductService {
     }
   }
 
-  // PATCH : seuls les champs envoyés sont modifiés (le formulaire entier, ou la seule quantité).
-  static async update(id: string, values: Partial<ProductFormValues>): Promise<Product> {
+  // PATCH : seuls les champs envoyés sont modifiés (le formulaire entier, la seule quantité, la photo…).
+  static async update(id: string, values: ProductPatch): Promise<Product> {
     try {
       return apiProductSchema.parse(
         await apiFetch(`/products/${encodeURIComponent(id)}`, { method: 'PATCH', body: values }),

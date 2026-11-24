@@ -23,6 +23,11 @@ export default function ProductRoute() {
     isFavorite,
     toggleFavorite,
     adjustQuantity,
+    choosePhoto,
+    isSavingPhoto,
+    recordCurrentLocation,
+    openLocation,
+    isLocating,
     goBack,
   } = useProductDetailRoute();
 
@@ -53,6 +58,11 @@ export default function ProductRoute() {
       onToggleFavorite={toggleFavorite}
       onAdjustQuantity={adjustQuantity}
       onBack={goBack}
+      onChoosePhoto={choosePhoto}
+      isSavingPhoto={isSavingPhoto}
+      onRecordLocation={recordCurrentLocation}
+      onOpenLocation={openLocation}
+      isLocating={isLocating}
       headerRight={<ProductEditLink productId={product.id} />}
     />
   );
