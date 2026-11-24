@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -15,6 +16,8 @@ interface ProductDetailScreenProps {
   onToggleFavorite: (id: string) => void;
   onAdjustQuantity: (id: string, delta: number) => void;
   onBack: () => void;
+  /** Élément affiché à droite de l'en-tête : la route y place le bouton « Modifier ». */
+  headerRight?: ReactNode;
 }
 
 /**
@@ -25,7 +28,7 @@ interface ProductDetailScreenProps {
  * La limite acceptée au Jour 1 (état local useStock) est levée.
  */
 export default function ProductDetailScreen(props: ProductDetailScreenProps) {
-  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onBack } = props;
+  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onBack, headerRight } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
   const { quantity, status, increment, decrement, reset } = useProductQuantity(product, onAdjustQuantity);
@@ -45,6 +48,7 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
             <Text style={styles.back}>‹</Text>
           </Pressable>
         }
+        right={headerRight}
       />
 
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
@@ -80,10 +84,10 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
       </ScrollView>
 
       {/*
-        Hors de la ScrollView : la barre reste fixe en bas. La fiche s'affiche dans l'onglet
-        Catalogue : la barre d'onglets réserve déjà la zone de la barre d'accueil iOS.
+        Hors de la ScrollView : la barre reste fixe en bas. La fiche est une route de la pile,
+        affichée par-dessus les onglets : c'est à elle de s'écarter de la barre d'accueil iOS.
       */}
-      <View style={[styles.actionBar, sidePadding, { paddingBottom: theme.spacing.md }]}>
+      <View style={[styles.actionBar, sidePadding, { paddingBottom: theme.spacing.md + insets.bottom }]}>
         <Pressable style={[styles.button, styles.buttonSecondary]} onPress={reset}>
           <Text style={[styles.buttonLabel, styles.buttonLabelSecondary]}>Annuler</Text>
         </Pressable>
