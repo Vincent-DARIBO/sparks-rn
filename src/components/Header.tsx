@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useThemedStyles, type Theme } from '../theme';
+
 /** Props typées : `subtitle` est optionnel grâce au `?`. */
 interface HeaderProps {
   title: string;
@@ -9,9 +11,11 @@ interface HeaderProps {
 /**
  * En-tête de l'application.
  * Composant de présentation : il ne gère aucun état, il affiche ses props.
+ * Ses couleurs viennent du thème (`header`, `onHeader`) : il reste sombre dans les deux modes.
  */
 export default function Header(props: HeaderProps) {
   const { title, subtitle } = props;
+  const { styles } = useThemedStyles(createStyles);
 
   return (
     <View style={styles.container}>
@@ -22,21 +26,23 @@ export default function Header(props: HeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 56, // provisoire : remplacé par les safe areas au Module 3
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-    backgroundColor: '#20232A',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#61DAFB',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#C9D1D9',
-    marginTop: 4,
-  },
-});
+// Fonction définie hors du composant : sa référence est stable, les styles
+// ne sont recréés que lorsque le thème change.
+const createStyles = ({ colors, spacing, typography }: Theme) =>
+  StyleSheet.create({
+    container: {
+      paddingTop: spacing.xxl + spacing.xl, // provisoire : remplacé par les safe areas au Module 3
+      paddingBottom: spacing.lg,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: colors.header,
+    },
+    title: {
+      ...typography.title,
+      color: colors.onHeader,
+    },
+    subtitle: {
+      ...typography.caption,
+      color: colors.onHeaderMuted,
+      marginTop: spacing.xs,
+    },
+  });
