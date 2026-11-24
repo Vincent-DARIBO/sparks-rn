@@ -6,9 +6,12 @@
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sparksrn"
+      "bundleIdentifier": "dev.scanstock.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +21,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.sparksrn"
+      "package": "dev.scanstock.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,6 +30,14 @@
       "expo-router",
       "expo-status-bar",
       "expo-sqlite",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       [
         "expo-camera",
         {
