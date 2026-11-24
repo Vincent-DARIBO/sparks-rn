@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
 
@@ -7,21 +7,48 @@ import { categoryLabels, type Category } from '../types';
 interface CategoryChipsProps {
   value: Category | null;
   onChange: (category: Category | null) => void;
+  /** Ajoute la pastille « Tous » (filtres du catalogue). `false` dans le formulaire. */
+  includeAll?: boolean;
+  /** `scroll` : une rangée qui défile (catalogue) ; `wrap` : retour à la ligne (formulaire). */
+  layout?: 'scroll' | 'wrap';
 }
 
 /** `Object.keys` renvoie `string[]` : on reprécise le type des clés. */
 const categories = Object.keys(categoryLabels) as Category[];
 
-/** « Tous » (`null`) puis une pastille par catégorie, calculées une seule fois. */
-const options: { key: Category | null; label: string }[] = [
-  { key: null, label: 'Tous' },
-  ...categories.map((c) => ({ key: c, label: categoryLabels[c] })),
-];
+/** Une pastille par catégorie, calculées une seule fois. */
+const categoryOptions: { key: Category | null; label: string }[] = categories.map((c) => ({
+  key: c,
+  label: categoryLabels[c],
+}));
 
-/** Filtres par catégorie : une rangée de pastilles qui défile horizontalement. */
+/** « Tous » (`null`) en tête, pour les filtres du catalogue. */
+const optionsWithAll = [{ key: null, label: 'Tous' }, ...categoryOptions];
+
+/** Pastilles de catégorie : filtres du catalogue et choix dans le formulaire. */
 export default function CategoryChips(props: CategoryChipsProps) {
-  const { value, onChange } = props;
+  const { value, onChange, includeAll = true, layout = 'scroll' } = props;
   const { styles } = useThemedStyles(createStyles);
+  const options = includeAll ? optionsWithAll : categoryOptions;
+
+  const chips = options.map((option) => {
+    const selected = option.key === value;
+    return (
+      <Pressable
+        key={option.label}
+        onPress={() => onChange(option.key)}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        style={({ pressed }) => [styles.chip, selected && styles.chipSelected, pressed && styles.pressed]}
+      >
+        <Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
+      </Pressable>
+    );
+  });
+
+  if (layout === 'wrap') {
+    return <View style={[styles.row, styles.wrap]}>{chips}</View>;
+  }
 
   return (
     <ScrollView
@@ -31,20 +58,7 @@ export default function CategoryChips(props: CategoryChipsProps) {
       // Un appui sur une pastille fonctionne du premier coup, même clavier ouvert.
       keyboardShouldPersistTaps="handled"
     >
-      {options.map((option) => {
-        const selected = option.key === value;
-        return (
-          <Pressable
-            key={option.label}
-            onPress={() => onChange(option.key)}
-            accessibilityRole="button"
-            accessibilityState={{ selected }}
-            style={({ pressed }) => [styles.chip, selected && styles.chipSelected, pressed && styles.pressed]}
-          >
-            <Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
-          </Pressable>
-        );
-      })}
+      {chips}
     </ScrollView>
   );
 }
@@ -52,6 +66,7 @@ export default function CategoryChips(props: CategoryChipsProps) {
 const createStyles = ({ colors, spacing, radius }: Theme) =>
   StyleSheet.create({
     row: { gap: spacing.sm },
+    wrap: { flexDirection: 'row', flexWrap: 'wrap' },
     chip: {
       height: 36,
       paddingHorizontal: 14,
