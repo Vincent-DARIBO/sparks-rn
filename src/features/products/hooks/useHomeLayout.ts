@@ -22,5 +22,5 @@ export default function useHomeLayout() {
   const gap = theme.spacing.md;
   const cardWidth = (width - horizontalPadding - gap * (columns - 1)) / columns;
 
-  return { insets, cardWidth };
+  return { insets, columns, cardWidth };
 }
