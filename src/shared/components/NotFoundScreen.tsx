@@ -5,17 +5,19 @@ import { useThemedStyles, type Theme } from '@/theme';
 import Header from './Header';
 
 interface NotFoundScreenProps {
+  /** Titre de l'en-tête : « Introuvable » par défaut. */
+  title?: string;
   message: string;
 }
 
 /** Écran affiché pour une adresse sans route ou un produit introuvable. */
 export default function NotFoundScreen(props: NotFoundScreenProps) {
-  const { message } = props;
+  const { title = 'Introuvable', message } = props;
   const { styles } = useThemedStyles(createStyles);
 
   return (
     <View style={styles.screen}>
-      <Header title="Introuvable" />
+      <Header title={title} />
       <View style={styles.body}>
         <Text style={styles.message}>{message}</Text>
         {/*

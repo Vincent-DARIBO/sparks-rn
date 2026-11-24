@@ -1,37 +1,69 @@
-import { router } from 'expo-router';
-
-import useInventoryContext from '@/features/products/hooks/useInventoryContext';
+import useCatalogRoute from '@/features/products/hooks/useCatalogRoute';
 import CatalogScreen from '@/features/products/screens/CatalogScreen';
-
-// Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
-// Fonction définie hors du composant : sa référence est stable, la liste mémoïsée
-// n'est donc pas redessinée à chaque rendu.
-const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
-const openNewProduct = () => router.push('/product/new');
+import ErrorView from '@/shared/components/ErrorView';
+import Header from '@/shared/components/Header';
+import LoadingView from '@/shared/components/LoadingView';
 
 /**
  * Route `/` (onglet Catalogue).
  *
  * Les fichiers de `src/app` restent minces : ils relient la navigation et
  * les données aux écrans de `src/features`, qui ne savent rien du routeur.
+ * Module 7 : la route gère les trois états d'une requête (chargement, erreur, données) ;
+ * l'écran, lui, ne reçoit que des produits et, au besoin, un bandeau d'erreur.
  *
  * La fiche produit est une route de la pile, empilée PAR-DESSUS les onglets : le catalogue
  * reste monté dessous, la recherche et le filtre sont retrouvés au retour.
  */
 export default function CatalogRoute() {
-  const inventory = useInventoryContext();
+  const {
+    products,
+    isLoadingProducts,
+    errorMessage,
+    refetchProducts,
+    isRefetchingProducts,
+    isFavorite,
+    toggleFavorite,
+    favoritesCount,
+    isLargeDataset,
+    setIsLargeDataset,
+    adjustQuantity,
+    openProduct,
+    addProduct,
+  } = useCatalogRoute();
+
+  const retry = () => void refetchProducts();
+
+  // Pas encore de données (premier chargement) : écran de chargement, ou d'erreur s'il a échoué.
+  if (isLoadingProducts || !products) {
+    const header = <Header title="Scan'Stock" />;
+    return errorMessage ? (
+      <ErrorView header={header} message={errorMessage} onRetry={retry} isRetrying={isRefetchingProducts} />
+    ) : (
+      <LoadingView header={header} />
+    );
+  }
 
   return (
     <CatalogScreen
-      products={inventory.products}
-      isFavorite={inventory.isFavorite}
-      onToggleFavorite={inventory.toggleFavorite}
-      favoritesCount={inventory.favoritesCount}
-      onAdjustQuantity={inventory.adjustQuantity}
+      products={products}
+      isFavorite={isFavorite}
+      onToggleFavorite={toggleFavorite}
+      favoritesCount={favoritesCount}
+      onAdjustQuantity={adjustQuantity}
       onOpenProduct={openProduct}
-      isLargeDataset={inventory.isLargeDataset}
-      onToggleLargeDataset={inventory.toggleLargeDataset}
-      onAddProduct={openNewProduct}
+      isLargeDataset={isLargeDataset}
+      onToggleLargeDataset={setIsLargeDataset}
+      onAddProduct={addProduct}
+      refreshing={isRefetchingProducts}
+      onRefresh={retry}
+      // Données déjà affichées : une actualisation en échec n'efface ni la liste, ni la recherche,
+      // ni le filtre. L'erreur s'affiche en bandeau au-dessus.
+      errorBanner={
+        errorMessage ? (
+          <ErrorView compact message={errorMessage} onRetry={retry} isRetrying={isRefetchingProducts} />
+        ) : null
+      }
     />
   );
 }

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Pressable, StyleSheet, Text } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -7,7 +7,8 @@ import { useThemedStyles, type Theme } from '@/theme';
 interface ProductFormHeaderProps {
   title: string;
   onCancel: () => void;
-  onSubmit: () => void;
+  /** Absent pendant le chargement du produit : seul « Annuler » est proposé. */
+  onSubmit?: () => void;
 }
 
 /** En-tête de la modale : Annuler — titre — Enregistrer. */
@@ -32,9 +33,14 @@ export default function ProductFormHeader(props: ProductFormHeaderProps) {
       <Text style={styles.title} numberOfLines={1} accessibilityRole="header">
         {title}
       </Text>
-      <Pressable onPress={onSubmit} hitSlop={12} style={[styles.side, styles.sideRight]} accessibilityRole="button">
-        <Text style={[styles.action, styles.actionStrong]}>Enregistrer</Text>
-      </Pressable>
+      {/* Sans « Enregistrer », une zone vide de même largeur garde le titre centré. */}
+      {onSubmit ? (
+        <Pressable onPress={onSubmit} hitSlop={12} style={[styles.side, styles.sideRight]} accessibilityRole="button">
+          <Text style={[styles.action, styles.actionStrong]}>Enregistrer</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.side} />
+      )}
     </SafeAreaView>
   );
 }

@@ -4,7 +4,7 @@ import type { Product } from '../types';
 import { getStockStatus } from '../utils/stock';
 
 /**
- * Boutons − / + d'un produit, branchés sur l'inventaire partagé (`useInventory`).
+ * Boutons − / + d'un produit, branchés sur les données du serveur.
  *
  * Remplace `useStock` du Jour 1 : le hook ne stocke plus la quantité, il lit
  * `product.quantity` et signale les changements au parent par `onAdjustQuantity`.

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import BackButton from '@/shared/components/BackButton';
 import Header from '@/shared/components/Header';
 import InfoRow from '../components/InfoRow';
 import ProductThumbnail from '../components/ProductThumbnail';
@@ -23,9 +24,8 @@ interface ProductDetailScreenProps {
 /**
  * Fiche produit.
  *
- * La quantité vient de l'inventaire partagé (useInventory) : une modification
- * faite ici se voit sur la carte du catalogue, et inversement.
- * La limite acceptée au Jour 1 (état local useStock) est levée.
+ * La quantité vient des données du serveur, partagées avec le catalogue :
+ * la carte et la fiche affichent toujours la même valeur.
  */
 export default function ProductDetailScreen(props: ProductDetailScreenProps) {
   const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onBack, headerRight } = props;
@@ -43,11 +43,7 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
       <Header
         title={product.name}
         subtitle={product.brand}
-        left={
-          <Pressable onPress={onBack} hitSlop={12} accessibilityLabel="Retour au catalogue">
-            <Text style={styles.back}>‹</Text>
-          </Pressable>
-        }
+        left={<BackButton onPress={onBack} />}
         right={headerRight}
       />
 
@@ -102,7 +98,6 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
-    back: { fontSize: 36, lineHeight: 36, color: colors.onHeader },
     content: { paddingVertical: spacing.lg, gap: spacing.lg },
     hero: {
       width: '100%',

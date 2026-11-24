@@ -1,5 +1,8 @@
 import ProductForm from '@/features/products/components/ProductForm';
+import ProductFormHeader from '@/features/products/components/ProductFormHeader';
 import useProductEditRoute from '@/features/products/hooks/useProductEditRoute';
+import ErrorView from '@/shared/components/ErrorView';
+import LoadingView from '@/shared/components/LoadingView';
 import NotFoundScreen from '@/shared/components/NotFoundScreen';
 
 /**
@@ -8,10 +11,25 @@ import NotFoundScreen from '@/shared/components/NotFoundScreen';
  * Le bouton retour matériel d'Android ferme la modale, sans rien enregistrer.
  */
 export default function EditProductRoute() {
-  const { id, defaultValues, cancel, save } = useProductEditRoute();
+  const { id, defaultValues, isProductNotFound, errorMessage, refetchProduct, isRefetchingProduct, cancel, save } =
+    useProductEditRoute();
 
+  if (isProductNotFound) {
+    return <NotFoundScreen title="Produit introuvable" message={`Aucun produit avec l'identifiant « ${id} ».`} />;
+  }
   if (!defaultValues) {
-    return <NotFoundScreen message={`Aucun produit avec l'identifiant « ${id} ».`} />;
+    // Pendant le chargement ou en cas d'erreur, « Annuler » reste disponible pour fermer la modale.
+    const header = <ProductFormHeader title="Modifier le produit" onCancel={cancel} />;
+    return errorMessage ? (
+      <ErrorView
+        header={header}
+        message={errorMessage}
+        onRetry={() => void refetchProduct()}
+        isRetrying={isRefetchingProduct}
+      />
+    ) : (
+      <LoadingView header={header} />
+    );
   }
 
   return <ProductForm title="Modifier le produit" defaultValues={defaultValues} onSubmit={save} onCancel={cancel} />;
