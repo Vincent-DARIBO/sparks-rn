@@ -46,6 +46,18 @@ Les modifications faites par l'app sont écrites dans `api/db.json`. Lancez `bun
 
 Sur un simulateur ou un émulateur du même ordinateur, l'adresse par défaut `http://localhost:3000` suffit. Sur un téléphone, `localhost` désigne le téléphone lui-même : copiez `.env.example` en `.env.local` et mettez-y l'adresse IP de votre ordinateur (celle affichée par `bunx expo start`), puis relancez Expo.
 
+## Test de bout en bout avec Maestro (à partir de SCAN-21)
+
+[Maestro](https://maestro.mobile.dev) rejoue un parcours sur un appareil ou un simulateur. Installation : `brew install maestro` sur macOS, ou `curl -fsSL "https://get.maestro.mobile.dev" | bash`.
+
+```bash
+bun run api:reset && bun run api   # dans un premier terminal
+bunx expo start                    # dans un deuxième, Expo Go ouvert sur l'appareil
+maestro test -e EXPO_URL=exp://<IP>:8081 .maestro/flows/ajuster-stock.yaml
+```
+
+Le scénario est écrit pour Expo Go sur iOS. Sur Android, changez `appId` en `host.exp.exponent` en tête du fichier. `maestro studio` ouvre un inspecteur pour trouver les sélecteurs. Le scénario remet le stock à 24 : il se rejoue sans `api:reset`, sauf s'il a échoué en cours de route.
+
 ## Tickets, issues et corrigés
 
 Chaque ticket de la formation est une **issue GitHub** (user story, règles

@@ -9,3 +9,14 @@ export function getStockStatus(quantity: number, minQuantity: number): StockStat
   if (quantity <= minQuantity) return 'low';
   return 'ok';
 }
+
+const stockStatusLabels: Record<StockStatus, string> = {
+  out: 'Rupture',
+  low: 'Stock bas',
+  ok: 'En stock',
+};
+
+/** Texte du badge de stock, par exemple « En stock · 25 ». */
+export function getStockText(status: StockStatus, quantity: number): string {
+  return `${stockStatusLabels[status]} · ${quantity}`;
+}

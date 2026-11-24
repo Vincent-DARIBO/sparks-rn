@@ -103,7 +103,13 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
             >
               <Text style={styles.stepperLabel}>−</Text>
             </Pressable>
-            <Animated.Text style={[styles.quantity, quantityPopStyle]}>{quantity}</Animated.Text>
+            <Animated.Text
+              // Identifiant stable pour le scénario Maestro : le nombre seul est ambigu.
+              testID="product-quantity"
+              style={[styles.quantity, quantityPopStyle]}
+            >
+              {quantity}
+            </Animated.Text>
             <Pressable
               style={styles.stepper}
               onPress={increment}

@@ -4,6 +4,7 @@ import Animated from 'react-native-reanimated';
 import usePopOnChange from '@/shared/hooks/usePopOnChange';
 import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
 import type { StockStatus } from '../types';
+import { getStockText } from '../utils/stock';
 
 interface StockBadgeProps {
   status: StockStatus;
@@ -19,16 +20,16 @@ interface StockBadgeProps {
  * Le statut est associé à un NOM de couleur du thème, pas à une valeur :
  * le badge s'adapte automatiquement au mode sombre.
  */
-const badgeConfig: Record<StockStatus, { label: string; color: keyof ColorTokens }> = {
-  out: { label: 'Rupture', color: 'danger' },
-  low: { label: 'Stock bas', color: 'warning' },
-  ok: { label: 'En stock', color: 'success' },
+const badgeColors: Record<StockStatus, keyof ColorTokens> = {
+  out: 'danger',
+  low: 'warning',
+  ok: 'success',
 };
 
 export default function StockBadge(props: StockBadgeProps) {
   const { status, quantity, productId } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const { label, color } = badgeConfig[status];
+  const color = badgeColors[status];
   // Le badge « pulse » quand la quantité de CE produit change.
   const popStyle = usePopOnChange(quantity, productId);
 
@@ -36,9 +37,7 @@ export default function StockBadge(props: StockBadgeProps) {
     // Tableau de styles : le style statique, puis la partie dynamique, puis le style animé.
     // `Animated.View` : une View dont le style peut être piloté depuis le thread UI.
     <Animated.View style={[styles.badge, { backgroundColor: theme.colors[color] }, popStyle]}>
-      <Text style={styles.label}>
-        {label} · {quantity}
-      </Text>
+      <Text style={styles.label}>{getStockText(status, quantity)}</Text>
     </Animated.View>
   );
 }
