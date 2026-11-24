@@ -30,9 +30,11 @@ export default function ProductFormHeader(props: ProductFormHeaderProps) {
       */}
       {Platform.OS === 'android' && <StatusBar style="auto" />}
       <Pressable onPress={onCancel} hitSlop={12} style={styles.side} accessibilityRole="button">
-        <Text style={styles.action}>Annuler</Text>
+        <Text style={styles.action} maxFontSizeMultiplier={HEADER_MAX_FONT_SCALE}>
+          Annuler
+        </Text>
       </Pressable>
-      <Text style={styles.title} numberOfLines={1} accessibilityRole="header">
+      <Text style={styles.title} numberOfLines={1} accessibilityRole="header" maxFontSizeMultiplier={HEADER_MAX_FONT_SCALE}>
         {title}
       </Text>
       {/* Sans « Enregistrer », une zone vide de même largeur garde le titre centré. */}
@@ -45,7 +47,12 @@ export default function ProductFormHeader(props: ProductFormHeaderProps) {
           accessibilityRole="button"
           accessibilityState={{ disabled: isSubmitting }}
         >
-          <Text style={[styles.action, styles.actionStrong, isSubmitting && styles.actionDisabled]}>Enregistrer</Text>
+          <Text
+            style={[styles.action, styles.actionStrong, isSubmitting && styles.actionDisabled]}
+            maxFontSizeMultiplier={HEADER_MAX_FONT_SCALE}
+          >
+            Enregistrer
+          </Text>
         </Pressable>
       ) : (
         <View style={styles.side} />
@@ -54,19 +61,22 @@ export default function ProductFormHeader(props: ProductFormHeaderProps) {
   );
 }
 
+// Annuler, le titre et Enregistrer se partagent UNE ligne : au-delà de 1,3 le titre disparaît.
+const HEADER_MAX_FONT_SCALE = 1.3;
+
 const createStyles = ({ colors, spacing, typography }: Theme) =>
   StyleSheet.create({
     header: {
       flexDirection: 'row',
       alignItems: 'center',
       paddingHorizontal: spacing.lg,
-      paddingVertical: spacing.md,
+      paddingVertical: spacing.sm,
       backgroundColor: colors.surface,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
     },
     // Même largeur des deux côtés : le titre reste centré.
-    side: { minWidth: 96 },
+    side: { minWidth: 96, minHeight: 44, justifyContent: 'center' }, // 44 pt de haut : zone tactile minimale
     sideRight: { alignItems: 'flex-end' },
     action: { ...typography.body, color: colors.primary },
     actionStrong: { fontWeight: '700' },

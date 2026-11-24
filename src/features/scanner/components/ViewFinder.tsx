@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { hiddenFromScreenReader } from '@/shared/accessibility/hiddenFromScreenReader';
 import { useThemedStyles, type Theme } from '@/theme';
 
 // Surimpression de la caméra : texte blanc sur l'image filmée, dans les deux thèmes.
@@ -11,7 +12,8 @@ export default function ViewFinder() {
 
   return (
     <View style={styles.container} pointerEvents="none">
-      <View style={styles.frame} />
+      {/* Le cadre est décoratif : le lecteur d'écran ne s'y arrête pas (la consigne dessous, si). */}
+      <View style={styles.frame} {...hiddenFromScreenReader} />
       <Text style={styles.hint}>Placez le code-barres dans le cadre</Text>
     </View>
   );

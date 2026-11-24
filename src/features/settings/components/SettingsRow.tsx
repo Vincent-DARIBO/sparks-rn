@@ -19,7 +19,7 @@ export default function SettingsRow(props: SettingsRowProps) {
   return (
     <View style={[styles.row, hasSeparator && styles.separator]}>
       <Text style={styles.label}>{label}</Text>
-      {children}
+      <View style={styles.control}>{children}</View>
     </View>
   );
 }
@@ -29,11 +29,14 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
     row: {
       minHeight: 52, // au-dessus des 44 pt minimum : toute la ligne reste confortable au doigt
       paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm, // quand la ligne passe sur deux lignes, le contenu ne touche pas les bords
       flexDirection: 'row',
+      flexWrap: 'wrap', // très grand texte : la valeur ou le contrôle passe sous le libellé
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: spacing.md,
     },
     separator: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+    control: { marginLeft: 'auto', flexShrink: 1, alignItems: 'flex-end' }, // reste à droite, même sur la 2e ligne
     label: { ...typography.body, color: colors.text, flexShrink: 1 },
   });

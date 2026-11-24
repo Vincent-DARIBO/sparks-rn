@@ -22,7 +22,8 @@ interface ProductListCellProps {
 export default function ProductListCell(props: ProductListCellProps) {
   const { product, columns, onAdjustQuantity, onPress, onDelete } = props;
   const { styles } = useThemedStyles(createStyles);
-  const card = <ProductCard product={product} onAdjustQuantity={onAdjustQuantity} onPress={onPress} />;
+  // `onDelete` va aussi à la carte : l'action « Supprimer » du lecteur d'écran remplace le glissement.
+  const card = <ProductCard product={product} onAdjustQuantity={onAdjustQuantity} onPress={onPress} onDelete={onDelete} />;
 
   return (
     <View style={[styles.cell, columns > 1 && styles.cellTwoColumns]}>

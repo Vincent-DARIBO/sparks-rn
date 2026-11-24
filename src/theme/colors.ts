@@ -43,7 +43,7 @@ export const lightColors: ColorTokens = {
   warning: '#B26200',
   danger: '#D93025',
   onStatus: '#FFFFFF', // texte posé sur un badge de statut
-  favorite: '#E3A008',
+  favorite: '#C48A07', // ambre foncé : 3,01:1 sur fond blanc (le minimum WCAG pour une icône est 3:1)
 };
 
 export const darkColors: ColorTokens = {

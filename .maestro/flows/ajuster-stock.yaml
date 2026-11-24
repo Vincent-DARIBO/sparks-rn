@@ -41,7 +41,7 @@ name: Ajuster le stock depuis la fiche produit
     timeout: 60000
 
 # Rechercher. « nutella » trouve la pâte à tartiner par sa marque.
-# Le libellé de chaque carte est « Ouvrir la fiche de <nom>, <stock> » : le texte
+# Le libellé de chaque carte est « <nom>, <marque>, <état du stock>, <n> unités » : le texte
 # d'un sélecteur Maestro est une expression régulière sur le texte entier,
 # d'où le `.*` pour ne pas dépendre du début du libellé.
 - tapOn: "Rechercher un produit"
@@ -53,11 +53,12 @@ name: Ajuster le stock depuis la fiche produit
 
 # Ouvrir la fiche. Le nombre seul est ambigu (24 peut apparaître ailleurs) :
 # on le repère par son testID « product-quantity », stable même si le
-# texte ou le style changent.
+# texte ou le style changent. Ce nombre est un élément « réglable » (SCAN-26) : iOS expose
+# sa valeur « 24 unités », Android son texte « 24 » ; `24.*` convient aux deux.
 - tapOn: ".*Pâte à tartiner 400 g.*"
 - assertVisible:
     id: "product-quantity"
-    text: "24"
+    text: "24.*"
 
 # Modifier le stock : +2 puis -1. Les libellés d'accessibilité servent de sélecteurs.
 - tapOn: "Ajouter une unité"
@@ -66,17 +67,17 @@ name: Ajuster le stock depuis la fiche produit
 # échoue ici, sur l'étape en cause, et non trois lignes plus bas.
 - assertVisible:
     id: "product-quantity"
-    text: "26"
+    text: "26.*"
 - tapOn: "Retirer une unité"
 - assertVisible:
     id: "product-quantity"
-    text: "25"
+    text: "25.*"
 
 # Le catalogue affiche la même valeur. Sur iOS, un élément accessible qui porte
 # un libellé masque ses enfants : Maestro lit donc le libellé de la carte
-# (« Ouvrir la fiche de ..., En stock · 25 »), pas le texte du badge.
+# (« ..., En stock, 25 unités »), pas le texte du badge.
 - tapOn: "Retour au catalogue"
-- assertVisible: ".*Pâte à tartiner 400 g.*En stock · 25.*"
+- assertVisible: ".*Pâte à tartiner 400 g.*En stock, 25 unités.*"
 
 # Remettre la donnée de départ : le scénario peut ainsi être rejoué sans
 # `api:reset`. On passe par la fiche : dans le catalogue, « Retirer une
@@ -85,7 +86,7 @@ name: Ajuster le stock depuis la fiche produit
 - tapOn: "Retirer une unité"
 - assertVisible:
     id: "product-quantity"
-    text: "24"
+    text: "24.*"
 - tapOn: "Retour au catalogue"
 
 # Vider la recherche pour ne pas gêner le lancement suivant.

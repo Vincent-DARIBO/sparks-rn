@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { type SharedValue } from 'react-native-reanimated';
 
+import { hiddenFromScreenReader } from '@/shared/accessibility/hiddenFromScreenReader';
 import { useThemedStyles, type Theme } from '@/theme';
 
 import useDeleteActionStyle, { ACTION_WIDTH } from '../hooks/useDeleteActionStyle';
@@ -19,7 +20,8 @@ export default function DeleteAction(props: DeleteActionProps) {
   const { containerStyle, iconStyle } = useDeleteActionStyle(translation);
 
   return (
-    <Animated.View style={containerStyle}>
+    // Le glissement n'est pas utilisable au lecteur d'écran : il passe par l'action « Supprimer » de la carte.
+    <Animated.View style={containerStyle} {...hiddenFromScreenReader}>
       <Pressable
         onPress={onPress}
         accessibilityRole="button"

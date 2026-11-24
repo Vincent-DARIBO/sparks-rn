@@ -25,10 +25,17 @@ export default function CatalogListHeader(props: CatalogListHeaderProps) {
       {__DEV__ ? (
         <View style={styles.devRow}>
           <Text style={styles.devLabel}>Démo perfs : 5 000 produits</Text>
-          <Switch value={isLargeDataset} onValueChange={onToggleLargeDataset} />
+          <Switch
+            value={isLargeDataset}
+            onValueChange={onToggleLargeDataset}
+            accessibilityLabel="Démo perfs : 5 000 produits"
+            style={styles.devSwitch}
+          />
         </View>
       ) : null}
-      <Text style={styles.sectionTitle}>Catalogue</Text>
+      <Text style={styles.sectionTitle} accessibilityRole="header">
+        Catalogue
+      </Text>
     </View>
   );
 }
@@ -49,8 +56,12 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      gap: spacing.md,
     },
+    // Le libellé rétrécit et passe à la ligne ; l'interrupteur garde sa taille et reste dans l'écran.
+    devSwitch: { flexShrink: 0 },
     devLabel: {
+      flexShrink: 1,
       ...typography.caption,
       color: colors.textMuted,
     },

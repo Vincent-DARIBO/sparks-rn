@@ -5,6 +5,8 @@ import { AccessibilityInfo } from 'react-native';
 import { HapticsService, type HapticFeedback } from '@/shared/services/HapticsService';
 import { useSettingsStore } from '@/shared/stores/settingsStore';
 
+import { formatUnits } from '../utils/productAccessibility';
+import { getStockStatus, stockStatusLabels } from '../utils/stock';
 import useProducts from './useProducts';
 
 /**
@@ -42,7 +44,11 @@ export default function useScanResult() {
     const product = findProduct(barcode);
     if (vibrateOnScan) void vibrate(product ? 'success' : 'warning');
     // Le lecteur d'écran annonce le résultat : la carte apparaît sans que le focus y soit déplacé.
-    AccessibilityInfo.announceForAccessibility(product ? `${product.name}, ${product.quantity} en stock` : 'Produit inconnu');
+    AccessibilityInfo.announceForAccessibility(
+      product
+        ? `${product.name}, ${stockStatusLabels[getStockStatus(product.quantity, product.minQuantity)]}, ${formatUnits(product.quantity)}`
+        : `Code ${barcode.split('').join(' ')} inconnu. Vous pouvez créer ce produit.`,
+    );
     setScannedBarcode(barcode);
     if (product && openAfterScan) openProduct(product.id);
   };

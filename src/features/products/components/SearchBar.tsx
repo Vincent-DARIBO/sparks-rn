@@ -33,7 +33,7 @@ export default function SearchBar(props: SearchBarProps) {
       {value.length > 0 ? (
         <Pressable
           onPress={() => onChangeText('')}
-          hitSlop={12}
+          style={styles.clearButton}
           accessibilityRole="button"
           accessibilityLabel="Effacer la recherche"
         >
@@ -57,6 +57,15 @@ const createStyles = ({ colors, spacing, radius }: Theme) =>
       borderWidth: 1,
       borderColor: colors.border,
       borderRadius: radius.md,
+    },
+    // Zone de 44 × 44 pt autour de l'icône de 20. Les marges négatives de 12 pt (le padding du champ)
+    // laissent la zone déborder sur les côtés : l'icône reste à sa place.
+    clearButton: {
+      minWidth: 44,
+      minHeight: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: -spacing.md,
     },
     input: {
       flex: 1,

@@ -16,11 +16,18 @@ export default function StatTile(props: StatTileProps) {
 
   return (
     <View style={styles.tile}>
-      <Text style={[styles.value, { color: theme.colors[tone] }]}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.value, { color: theme.colors[tone] }]} maxFontSizeMultiplier={TILE_MAX_FONT_SCALE}>
+        {value}
+      </Text>
+      <Text style={styles.label} maxFontSizeMultiplier={TILE_MAX_FONT_SCALE}>
+        {label}
+      </Text>
     </View>
   );
 }
+
+// Trois tuiles se partagent la largeur de l'écran : au-delà de 1,3, « Produits » ne tient plus sur une ligne.
+const TILE_MAX_FONT_SCALE = 1.3;
 
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({

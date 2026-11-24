@@ -2,10 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { hiddenFromScreenReader } from '@/shared/accessibility/hiddenFromScreenReader';
 import { useThemedStyles, type Theme } from '@/theme';
-import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
+import useProductCard from '../hooks/useProductCard';
 import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
-import { getStockStatus, getStockText } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
 
@@ -15,6 +15,8 @@ interface ProductCardProps {
   onAdjustQuantity: (id: string, delta: number) => void;
   /** Appui sur la carte : ouvre la fiche produit. */
   onPress: (id: string) => void;
+  /** Absent = carte non supprimable : l'action « Supprimer » du lecteur d'écran n'est pas proposée. */
+  onDelete?: (id: string) => void;
 }
 
 /**
@@ -38,26 +40,35 @@ interface ProductCardProps {
  *   (avec React Compiler activé, ce `memo` deviendrait superflu).
  */
 export default memo(function ProductCard(props: ProductCardProps) {
-  const { product, onAdjustQuantity, onPress } = props;
+  const { product, onAdjustQuantity, onPress, onDelete } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const isFavorite = useIsFavorite(product.id);
-  const toggleFavorite = useToggleFavorite();
-  const status = getStockStatus(product.quantity, product.minQuantity);
+  const { status, isFavorite, toggleFavorite, accessibilityLabel, accessibilityActions, handleAccessibilityAction } =
+    useProductCard({ product, onAdjustQuantity, onPress, onDelete });
 
   return (
-    <View style={styles.card}>
-      <View style={styles.main}>
+    // Accessibilité : `accessible` regroupe la carte en UN seul élément, lu en une phrase.
+    // `onAccessibilityTap` : sur iOS, le double appui de VoiceOver n'envoie pas l'action `activate`, il appelle ce rappel.
+    // Ses actions remplacent les petits boutons, que les `hiddenFromScreenReader` ci-dessous
+    // retirent du parcours du lecteur d'écran (iOS ET Android). Au doigt, rien ne change.
+    <View
+      style={styles.card}
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint="Ouvre la fiche produit"
+      accessibilityActions={accessibilityActions}
+      onAccessibilityAction={handleAccessibilityAction}
+      onAccessibilityTap={() => onPress(product.id)}
+    >
+      <View style={styles.main} {...hiddenFromScreenReader}>
         {/*
           Seule la zone d'information ouvre la fiche. On n'imbrique pas les boutons
           −, + et ★ dans ce Pressable : un bouton désactivé (− à 0) laisserait
-          l'appui remonter au parent et ouvrirait la fiche, et le lecteur d'écran
-          verrait toute la carte comme un seul bouton.
+          l'appui remonter au parent et ouvrirait la fiche.
           `style` peut être une fonction de l'état d'appui : la zone s'enfonce pendant l'appui.
         */}
         <Pressable
           onPress={() => onPress(product.id)}
-          accessibilityRole="button"
-          accessibilityLabel={`Ouvrir la fiche de ${product.name}, ${getStockText(status, product.quantity)}`}
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
           <ProductThumbnail size={THUMBNAIL_SIZE} photoUri={product.photoUri} />
@@ -77,24 +88,32 @@ export default memo(function ProductCard(props: ProductCardProps) {
             style={styles.stepper}
             onPress={() => onAdjustQuantity(product.id, -1)}
             disabled={product.quantity === 0}
+            accessibilityRole="button"
             accessibilityLabel="Retirer une unité"
           >
-            <Text style={styles.stepperLabel}>−</Text>
+            <Text style={styles.stepperLabel} maxFontSizeMultiplier={STEPPER_MAX_FONT_SCALE}>
+              −
+            </Text>
           </Pressable>
           <Pressable
             style={styles.stepper}
             onPress={() => onAdjustQuantity(product.id, 1)}
             disabled={product.quantity >= MAX_QUANTITY}
+            accessibilityRole="button"
             accessibilityLabel="Ajouter une unité"
           >
-            <Text style={styles.stepperLabel}>+</Text>
+            <Text style={styles.stepperLabel} maxFontSizeMultiplier={STEPPER_MAX_FONT_SCALE}>
+              +
+            </Text>
           </Pressable>
         </View>
       </View>
 
       <Pressable
         onPress={() => toggleFavorite(product.id)}
-        hitSlop={12} // agrandit la zone tactile sans changer la taille visuelle
+        hitSlop={12} // agrandit la zone tactile sans changer la taille visuelle : 24 + 12 + 12 = 48 pt
+        {...hiddenFromScreenReader}
+        accessibilityRole="button"
         accessibilityLabel={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
       >
         <Ionicons name={isFavorite ? 'star' : 'star-outline'} size={24} color={theme.colors.favorite} />
@@ -104,6 +123,8 @@ export default memo(function ProductCard(props: ProductCardProps) {
 });
 
 const THUMBNAIL_SIZE = 64;
+// Le glyphe doit rester dans son cercle de 44 pt : au-delà de 1,3 il serait rogné.
+const STEPPER_MAX_FONT_SCALE = 1.3;
 
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
@@ -150,9 +171,10 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       // Décalage de la largeur de l'image : les boutons restent alignés sous le texte.
       marginLeft: THUMBNAIL_SIZE + spacing.md,
     },
+    // 44 × 44 : la taille minimale recommandée (Apple et Google) pour une zone tactile.
     stepper: {
-      width: 36,
-      height: 36,
+      width: 44,
+      height: 44,
       borderRadius: radius.pill,
       backgroundColor: colors.primarySoft,
       alignItems: 'center',

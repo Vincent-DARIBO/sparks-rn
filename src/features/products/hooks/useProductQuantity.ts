@@ -1,7 +1,9 @@
 import { useRef } from 'react';
+import { AccessibilityInfo, type AccessibilityActionEvent } from 'react-native';
 
-import type { Product } from '../types';
-import { getStockStatus } from '../utils/stock';
+import { MAX_QUANTITY, type Product } from '../types';
+import { formatUnits } from '../utils/productAccessibility';
+import { clampQuantity, getStockStatus } from '../utils/stock';
 
 /**
  * Boutons − / + d'un produit, branchés sur les données du serveur.
@@ -21,7 +23,21 @@ export default function useProductQuantity(
   const decrement = () => onAdjustQuantity(product.id, -1);
   const reset = () => onAdjustQuantity(product.id, initialQuantityRef.current - product.quantity);
 
+  // Accessibilité : la quantité est un élément « réglable ». VoiceOver : balayer vers le haut / le bas ;
+  // TalkBack : le menu des actions. Le système envoie `increment` ou `decrement`.
+  const handleQuantityAccessibilityAction = (event: AccessibilityActionEvent) => {
+    const delta = event.nativeEvent.actionName === 'increment' ? 1 : -1;
+    const newQuantity = clampQuantity(product.quantity + delta);
+    if (newQuantity === product.quantity) return;
+    onAdjustQuantity(product.id, delta);
+    // La `accessibilityValue` est mise à jour par le système de façon asynchrone, et ni iOS ni Android
+    // n'annoncent seuls son changement : on dit la quantité à la main, sur les deux plateformes.
+    AccessibilityInfo.announceForAccessibility(formatUnits(newQuantity));
+  };
+
   return {
+    quantityAccessibilityValue: { min: 0, max: MAX_QUANTITY, now: product.quantity, text: formatUnits(product.quantity) },
+    handleQuantityAccessibilityAction,
     quantity: product.quantity,
     status: getStockStatus(product.quantity, product.minQuantity), // valeur dérivée, pas un état
     increment,

@@ -41,7 +41,9 @@ export default function CategoryChips(props: CategoryChipsProps) {
         accessibilityState={{ selected }}
         style={({ pressed }) => [styles.chip, selected && styles.chipSelected, pressed && styles.pressed]}
       >
-        <Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
+        <Text style={[styles.label, selected && styles.labelSelected]} maxFontSizeMultiplier={CHIP_MAX_FONT_SCALE}>
+          {option.label}
+        </Text>
       </Pressable>
     );
   });
@@ -63,12 +65,15 @@ export default function CategoryChips(props: CategoryChipsProps) {
   );
 }
 
+// La rangée défile et la pastille grandit en hauteur : un plafond haut suffit.
+const CHIP_MAX_FONT_SCALE = 2;
+
 const createStyles = ({ colors, spacing, radius }: Theme) =>
   StyleSheet.create({
     row: { gap: spacing.sm },
     wrap: { flexDirection: 'row', flexWrap: 'wrap' },
     chip: {
-      height: 36,
+      minHeight: 44, // zone tactile minimale ; `minHeight` et non `height` : la pastille grandit avec le texte
       paddingHorizontal: 14,
       borderRadius: radius.pill,
       borderWidth: 1,
