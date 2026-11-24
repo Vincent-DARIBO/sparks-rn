@@ -23,6 +23,8 @@ interface ProductCardProps {
  * - AUCUN état local, pas même un `useRef` : FlashList recycle les cellules,
  *   un état local suivrait la cellule et non le produit. La carte affiche
  *   `product.quantity` (données du serveur) et signale les changements au parent.
+ *   Le badge de stock, lui, se souvient de la quantité précédente pour « pulser » :
+ *   il la mémorise AVEC l'id du produit, ce qui distingue un recyclage d'un vrai changement.
  * - Les FAVORIS : la carte lit elle-même SON étoile dans le store Zustand (sélecteur
  *   `useIsFavorite`). Parmi les cartes, seule celle dont l'étoile change se re-rend.
  *   L'écran Catalogue, lui, se re-rend : le sous-titre « N produits en favori » change.
@@ -61,7 +63,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
               {product.name}
             </Text>
             <Text style={styles.category}>{categoryLabels[product.category]}</Text>
-            <StockBadge status={status} quantity={product.quantity} />
+            <StockBadge status={status} quantity={product.quantity} productId={product.id} />
           </View>
         </Pressable>
 

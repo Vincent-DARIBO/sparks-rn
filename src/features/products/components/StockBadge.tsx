@@ -1,11 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 
+import usePopOnChange from '@/shared/hooks/usePopOnChange';
 import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
 import type { StockStatus } from '../types';
 
 interface StockBadgeProps {
   status: StockStatus;
   quantity: number;
+  // Identifiant du produit : une cellule recyclée (autre produit) ne doit pas pulser.
+  // Facultatif, mais SANS lui le badge pulse aussi au recyclage : à fournir dans une liste.
+  productId?: string;
 }
 
 /**
@@ -21,17 +26,20 @@ const badgeConfig: Record<StockStatus, { label: string; color: keyof ColorTokens
 };
 
 export default function StockBadge(props: StockBadgeProps) {
-  const { status, quantity } = props;
+  const { status, quantity, productId } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const { label, color } = badgeConfig[status];
+  // Le badge « pulse » quand la quantité de CE produit change.
+  const popStyle = usePopOnChange(quantity, productId);
 
   return (
-    // Tableau de styles : le style statique, puis la partie dynamique.
-    <View style={[styles.badge, { backgroundColor: theme.colors[color] }]}>
+    // Tableau de styles : le style statique, puis la partie dynamique, puis le style animé.
+    // `Animated.View` : une View dont le style peut être piloté depuis le thread UI.
+    <Animated.View style={[styles.badge, { backgroundColor: theme.colors[color] }, popStyle]}>
       <Text style={styles.label}>
         {label} · {quantity}
       </Text>
-    </View>
+    </Animated.View>
   );
 }
 

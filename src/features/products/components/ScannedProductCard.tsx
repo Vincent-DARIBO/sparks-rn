@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { useThemedStyles, type Theme } from '@/theme';
 
@@ -15,13 +16,19 @@ type ScannedProductCardProps =
   | { kind: 'known'; product: Product; onOpen: () => void }
   | { kind: 'unknown'; barcode: string; onCreate: () => void };
 
-/** Carte du dernier code lu, en bas de l'écran Scanner. Le scan suivant la remplace. */
+/**
+ * Carte du dernier code lu, en bas de l'écran Scanner. Le scan suivant la remplace.
+ * `entering` : animation d'ENTRÉE, jouée une seule fois, quand la carte apparaît (montage).
+ * Elle entre par le bas en 300 ms (opacité 0 → 1, glissement de 25 px vers le haut), sans ressort :
+ * un ressort s'appliquerait aussi à l'opacité et ferait clignoter la carte.
+ * La route lui donne `key={code lu}` : voir scanner.tsx.
+ */
 export default function ScannedProductCard(props: ScannedProductCardProps) {
   const { styles } = useThemedStyles(createStyles);
   const buttonLabel = props.kind === 'known' ? 'Ouvrir la fiche' : 'Créer ce produit';
 
   return (
-    <View style={styles.card}>
+    <Animated.View entering={FadeInDown.duration(300)} style={styles.card}>
       {props.kind === 'known' ? (
         <View style={styles.row}>
           <ProductThumbnail size={48} photoUri={props.product.photoUri} />
@@ -34,6 +41,7 @@ export default function ScannedProductCard(props: ScannedProductCardProps) {
           <StockBadge
             status={getStockStatus(props.product.quantity, props.product.minQuantity)}
             quantity={props.product.quantity}
+            productId={props.product.id}
           />
         </View>
       ) : (
@@ -50,7 +58,7 @@ export default function ScannedProductCard(props: ScannedProductCardProps) {
       >
         <Text style={styles.buttonLabel}>{buttonLabel}</Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 
