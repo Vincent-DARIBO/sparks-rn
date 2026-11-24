@@ -4,12 +4,15 @@ import { useThemedStyles, type Theme } from '@/theme';
 
 import type { Product } from '../types';
 import ProductCard from './ProductCard';
+import SwipeableRow from './SwipeableRow';
 
 interface ProductListCellProps {
   product: Product;
   columns: number;
   onAdjustQuantity: (id: string, delta: number) => void;
   onPress: (id: string) => void;
+  /** Absent = carte non glissable (démo de performances). */
+  onDelete?: (id: string) => void;
 }
 
 /**
@@ -17,16 +20,19 @@ interface ProductListCellProps {
  * la cellule ajoute l'espacement (marge basse, et marge latérale en deux colonnes).
  */
 export default function ProductListCell(props: ProductListCellProps) {
-  const { product, columns, onAdjustQuantity, onPress } = props;
+  const { product, columns, onAdjustQuantity, onPress, onDelete } = props;
   const { styles } = useThemedStyles(createStyles);
+  const card = <ProductCard product={product} onAdjustQuantity={onAdjustQuantity} onPress={onPress} />;
 
   return (
     <View style={[styles.cell, columns > 1 && styles.cellTwoColumns]}>
-      <ProductCard
-        product={product}
-        onAdjustQuantity={onAdjustQuantity}
-        onPress={onPress}
-      />
+      {onDelete ? (
+        <SwipeableRow product={product} onDelete={onDelete}>
+          {card}
+        </SwipeableRow>
+      ) : (
+        card
+      )}
     </View>
   );
 }

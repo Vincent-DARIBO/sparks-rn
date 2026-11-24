@@ -8,6 +8,7 @@ interface UseCatalogRenderItemParams {
   columns: number;
   onAdjustQuantity: (id: string, delta: number) => void;
   onOpenProduct: (id: string) => void;
+  onDeleteProduct?: (id: string) => void;
 }
 
 /**
@@ -18,7 +19,7 @@ interface UseCatalogRenderItemParams {
  * Fichier `.tsx` : le hook retourne du JSX.
  */
 export default function useCatalogRenderItem(params: UseCatalogRenderItemParams) {
-  const { columns, onAdjustQuantity, onOpenProduct } = params;
+  const { columns, onAdjustQuantity, onOpenProduct, onDeleteProduct } = params;
 
   const renderItem: ListRenderItem<Product> = useCallback(
     ({ item }) => (
@@ -27,9 +28,10 @@ export default function useCatalogRenderItem(params: UseCatalogRenderItemParams)
         columns={columns}
         onAdjustQuantity={onAdjustQuantity}
         onPress={onOpenProduct}
+        onDelete={onDeleteProduct}
       />
     ),
-    [columns, onAdjustQuantity, onOpenProduct],
+    [columns, onAdjustQuantity, onOpenProduct, onDeleteProduct],
   );
 
   return { renderItem };

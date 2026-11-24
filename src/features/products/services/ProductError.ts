@@ -23,6 +23,10 @@ export class ProductError extends AppError {
     );
   }
 
+  static deleteFailed(technicalDetails?: unknown): ProductError {
+    return new ProductError('delete_failed', 'Impossible de supprimer le produit', 'delete_failed', technicalDetails);
+  }
+
   static notFound(technicalDetails?: unknown): ProductError {
     return new ProductError('not_found', 'Ce produit est introuvable', 'not_found', technicalDetails);
   }
