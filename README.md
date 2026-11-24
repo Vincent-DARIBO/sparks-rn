@@ -28,6 +28,19 @@ bunx tsc --noEmit   # vérification des types
 bunx expo lint      # ESLint
 ```
 
+## L'API de démonstration (à partir du Jour 3)
+
+L'inventaire est servi par une API REST simulée, [json-server](https://github.com/typicode/json-server), qui demande Node 22.12 ou plus.
+
+```bash
+bun run api         # démarre l'API sur le port 3000, à partir de api/db.json
+bun run api:reset   # remet l'inventaire dans son état de départ
+```
+
+Les modifications faites par l'app sont écrites dans `api/db.json`. Lancez `bun run api:reset` avant de commiter, pour ne pas embarquer vos données de test.
+
+Sur un simulateur ou un émulateur du même ordinateur, l'adresse par défaut `http://localhost:3000` suffit. Sur un téléphone, `localhost` désigne le téléphone lui-même : copiez `.env.example` en `.env.local` et mettez-y l'adresse IP de votre ordinateur (celle affichée par `bunx expo start`), puis relancez Expo.
+
 ## Tickets, issues et corrigés
 
 Chaque ticket de la formation est une **issue GitHub** (user story, règles
@@ -55,6 +68,7 @@ bun install
 | `etape-04-listes` | Recherche, filtres par catégorie, liste fluide avec FlashList (SCAN-06, SCAN-07) |
 | `etape-05-navigation` | Expo Router : onglets, fiche produit par son adresse, modale, lien profond (SCAN-08, SCAN-09) |
 | `etape-06-formulaires` | Formulaires avec React Hook Form, validation Zod, gestion du clavier (SCAN-10, SCAN-11) |
+| `etape-07-depart` | Départ du Jour 3 : API REST simulée avec json-server |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
