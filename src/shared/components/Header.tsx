@@ -10,6 +10,8 @@ interface HeaderProps {
   subtitle?: string;
   /** Élément optionnel affiché à gauche du titre (ex. bouton retour de la fiche). */
   left?: ReactNode;
+  /** Élément optionnel affiché à droite du titre (ex. bouton « Modifier » de la fiche). */
+  right?: ReactNode;
 }
 
 /**
@@ -19,7 +21,7 @@ interface HeaderProps {
  * Il respecte l'encoche, la Dynamic Island et la barre d'état de chaque appareil.
  */
 export default function Header(props: HeaderProps) {
-  const { title, subtitle, left } = props;
+  const { title, subtitle, left, right } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   // Hauteur de l'encoche / Dynamic Island / barre d'état, propre à chaque appareil.
   const insets = useSafeAreaInsets();
@@ -42,6 +44,7 @@ export default function Header(props: HeaderProps) {
           {/* Rendu conditionnel : rien n'est affiché si subtitle est absent */}
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
+        {right}
       </View>
     </View>
   );

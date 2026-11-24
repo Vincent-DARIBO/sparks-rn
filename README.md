@@ -53,13 +53,16 @@ bun install
 | `etape-03-styles` | Thème clair/sombre, mise en page, zones sûres, fiche produit (SCAN-03 à SCAN-05) |
 | `etape-04-depart` | Départ du Jour 2 : organisation par fonctionnalité et alias `@/` |
 | `etape-04-listes` | Recherche, filtres par catégorie, liste fluide avec FlashList (SCAN-06, SCAN-07) |
+| `etape-05-navigation` | Expo Router : onglets, fiche produit par son adresse, modale, lien profond (SCAN-08, SCAN-09) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
 ## Arborescence
 
 ```
-App.tsx                  Point d'entrée de l'application
+src/app/                 Routes Expo Router : un fichier = un écran
+  (tabs)/                Onglets Catalogue, Scanner, Réglages
+  product/[id]/          Fiche d'un produit et sa modale de modification
 src/features/products/   Tout ce qui concerne les produits
   components/            Composants d'affichage (carte, badge, ligne d'information)
   hooks/                 État et logique (stock, favoris, catalogue)
