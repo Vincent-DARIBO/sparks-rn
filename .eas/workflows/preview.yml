@@ -1,0 +1,35 @@
+# SCAN-25 : à chaque push sur main, vérifier le code, puis publier une mise à jour
+# à distance (EAS Update) sur le canal « preview ».
+#
+# Activation : `bunx eas-cli init`, relier le dépôt GitHub au projet sur expo.dev
+# (Project settings > GitHub), puis pousser sur main.
+# Si le dépôt ne peut pas être relié, on lance le workflow à la main :
+#   bunx eas-cli workflow:run .eas/workflows/preview.yml
+name: Vérifier et publier sur preview
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  checks:
+    name: Types et tests
+    steps:
+      - uses: eas/checkout
+      # Installe les dépendances avec le gestionnaire de paquets détecté dans le projet (bun ici, d'après `bun.lock`).
+      - uses: eas/install_node_modules
+      - name: TypeScript
+        run: bun run typecheck
+      # `--ci` : Jest échoue au lieu de créer un instantané manquant.
+      - name: Tests
+        run: bun run test --ci
+
+  update:
+    name: Mise à jour (canal preview)
+    # `needs` : ce job ne démarre que si `checks` a réussi. Un test cassé ne publie donc rien.
+    needs: [checks]
+    type: update
+    params:
+      channel: preview
+      # Le message du commit n'existe que pour un push : lancé à la main, le workflow utilise le texte de secours.
+      message: ${{ github.commit_message || 'Publication manuelle' }}
