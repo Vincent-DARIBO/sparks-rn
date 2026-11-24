@@ -1,15 +1,24 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import type { ProductFormValues } from '../schema';
 import type { Product } from '../types';
+import { sanitizeBarcode } from '../utils/sanitizeBarcode';
 import useCreateProduct from './useCreateProduct';
 
 // Pas de catégorie par défaut : l'utilisateur DOIT en choisir une.
 const NEW_PRODUCT_DEFAULTS = { name: '', brand: '', barcode: '', quantity: 0, minQuantity: 5 };
 
-/** Logique de la modale `/product/new` : valeurs de départ, annuler, créer. */
+/**
+ * Logique de la modale `/product/new` : valeurs de départ, annuler, créer.
+ * Module 8 : `/product/new?barcode=3017620422003` (depuis le scanner) préremplit le code-barres.
+ * Une URL peut être tapée ou modifiée à la main : le paramètre est nettoyé comme une saisie
+ * au clavier (chiffres seulement, 13 au plus), puis le schéma le vérifie à l'enregistrement.
+ */
 export default function useNewProductRoute() {
   const router = useRouter();
+  // `?barcode=a&barcode=b` donne un TABLEAU : on garde la première valeur.
+  const { barcode } = useLocalSearchParams<{ barcode?: string | string[] }>();
+  const barcodeParam = Array.isArray(barcode) ? barcode[0] : barcode;
   const { createProduct } = useCreateProduct();
 
   const cancel = () => router.back();
@@ -28,5 +37,5 @@ export default function useNewProductRoute() {
     router.replace({ pathname: '/product/[id]', params: { id: created.id } });
   };
 
-  return { defaultValues: NEW_PRODUCT_DEFAULTS, cancel, submit };
+  return { defaultValues: { ...NEW_PRODUCT_DEFAULTS, barcode: sanitizeBarcode(barcodeParam ?? '') }, cancel, submit };
 }
