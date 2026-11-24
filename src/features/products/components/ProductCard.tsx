@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
-import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
+import { useFavoritesStore } from '../stores/favoritesStore';
 import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
 import { getStockStatus } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
@@ -25,18 +25,15 @@ interface ProductCardProps {
  *   `product.quantity` (données du serveur) et signale les changements au parent.
  *   Le badge de stock, lui, se souvient de la quantité précédente pour « pulser » :
  *   il la mémorise AVEC l'id du produit, ce qui distingue un recyclage d'un vrai changement.
- * - Les FAVORIS : la carte lit elle-même SON étoile dans le store Zustand (sélecteur
- *   `useIsFavorite`). Parmi les cartes, seule celle dont l'étoile change se re-rend.
- *   L'écran Catalogue, lui, se re-rend : le sous-titre « N produits en favori » change.
- *   Mais FlashList ne redessine aucune cellule, car `data` et `renderItem` restent identiques.
- * - `memo` : la carte n'est rendue à nouveau que si ses props changent
+ * - Les FAVORIS : la carte lit l'étoile de son produit dans le store Zustand.
+ * - `memo` : la carte n'est pas re-rendue par son parent si ses props sont identiques
  *   (avec React Compiler activé, ce `memo` deviendrait superflu).
  */
 export default memo(function ProductCard(props: ProductCardProps) {
   const { product, onAdjustQuantity, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const isFavorite = useIsFavorite(product.id);
-  const toggleFavorite = useToggleFavorite();
+  const { favoriteIds, toggleFavorite } = useFavoritesStore();
+  const isFavorite = favoriteIds.includes(product.id);
   const status = getStockStatus(product.quantity, product.minQuantity);
 
   return (
