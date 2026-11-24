@@ -35,8 +35,9 @@ export default function RootLayout() {
         >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="product/[id]/index" />
-          {/* Modale : simple option de présentation. Sur iOS, elle se ferme d'un geste vers le bas. */}
+          {/* Modales : simple option de présentation. Sur iOS, elles se ferment d'un geste vers le bas. */}
           <Stack.Screen name="product/[id]/edit" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="product/new" options={{ presentation: 'modal' }} />
         </Stack>
         {/* L'en-tête reste sombre dans les deux thèmes → texte de la barre d'état toujours en clair */}
         <StatusBar style="light" />

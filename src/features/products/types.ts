@@ -20,9 +20,6 @@ export interface Product {
   minQuantity: number;
 }
 
-/** Champs modifiables dans le formulaire : tout le produit sauf son identifiant. */
-export type ProductFormValues = Omit<Product, 'id'>;
-
 /** État du stock d'un produit, calculé à partir de la quantité et du seuil. */
 export type StockStatus = 'out' | 'low' | 'ok';
 

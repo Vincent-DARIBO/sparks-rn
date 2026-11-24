@@ -7,6 +7,7 @@ import CatalogScreen from '@/features/products/screens/CatalogScreen';
 // Fonction définie hors du composant : sa référence est stable, la liste mémoïsée
 // n'est donc pas redessinée à chaque rendu.
 const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
+const openNewProduct = () => router.push('/product/new');
 
 /**
  * Route `/` (onglet Catalogue).
@@ -30,6 +31,7 @@ export default function CatalogRoute() {
       onOpenProduct={openProduct}
       isLargeDataset={inventory.isLargeDataset}
       onToggleLargeDataset={inventory.toggleLargeDataset}
+      onAddProduct={openNewProduct}
     />
   );
 }

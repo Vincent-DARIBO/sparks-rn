@@ -54,6 +54,7 @@ bun install
 | `etape-04-depart` | Départ du Jour 2 : organisation par fonctionnalité et alias `@/` |
 | `etape-04-listes` | Recherche, filtres par catégorie, liste fluide avec FlashList (SCAN-06, SCAN-07) |
 | `etape-05-navigation` | Expo Router : onglets, fiche produit par son adresse, modale, lien profond (SCAN-08, SCAN-09) |
+| `etape-06-formulaires` | Formulaires avec React Hook Form, validation Zod, gestion du clavier (SCAN-10, SCAN-11) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
