@@ -6,32 +6,30 @@ import type { Product } from '../types';
 
 interface UseCatalogRenderItemParams {
   columns: number;
-  isFavorite: (id: string) => boolean;
-  onToggleFavorite: (id: string) => void;
   onAdjustQuantity: (id: string, delta: number) => void;
   onOpenProduct: (id: string) => void;
 }
 
 /**
  * Fournit un `renderItem` STABLE (useCallback) : FlashList ne recrée pas
- * toutes les cellules à chaque rendu de l'écran (saisie de recherche, etc.).
+ * toutes les cellules à chaque rendu de l'écran (saisie de recherche, favori ajouté, etc.).
+ * Les favoris n'y figurent plus : chaque carte lit son étoile dans le store. Toucher une
+ * étoile ne change donc ni `renderItem`, ni les props des cellules.
  * Fichier `.tsx` : le hook retourne du JSX.
  */
 export default function useCatalogRenderItem(params: UseCatalogRenderItemParams) {
-  const { columns, isFavorite, onToggleFavorite, onAdjustQuantity, onOpenProduct } = params;
+  const { columns, onAdjustQuantity, onOpenProduct } = params;
 
   const renderItem: ListRenderItem<Product> = useCallback(
     ({ item }) => (
       <ProductListCell
         product={item}
         columns={columns}
-        isFavorite={isFavorite(item.id)}
-        onToggleFavorite={onToggleFavorite}
         onAdjustQuantity={onAdjustQuantity}
         onPress={onOpenProduct}
       />
     ),
-    [columns, isFavorite, onToggleFavorite, onAdjustQuantity, onOpenProduct],
+    [columns, onAdjustQuantity, onOpenProduct],
   );
 
   return { renderItem };

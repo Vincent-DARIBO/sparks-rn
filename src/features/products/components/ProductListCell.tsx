@@ -8,8 +8,6 @@ import ProductCard from './ProductCard';
 interface ProductListCellProps {
   product: Product;
   columns: number;
-  isFavorite: boolean;
-  onToggleFavorite: (id: string) => void;
   onAdjustQuantity: (id: string, delta: number) => void;
   onPress: (id: string) => void;
 }
@@ -19,15 +17,13 @@ interface ProductListCellProps {
  * la cellule ajoute l'espacement (marge basse, et marge latérale en deux colonnes).
  */
 export default function ProductListCell(props: ProductListCellProps) {
-  const { product, columns, isFavorite, onToggleFavorite, onAdjustQuantity, onPress } = props;
+  const { product, columns, onAdjustQuantity, onPress } = props;
   const { styles } = useThemedStyles(createStyles);
 
   return (
     <View style={[styles.cell, columns > 1 && styles.cellTwoColumns]}>
       <ProductCard
         product={product}
-        isFavorite={isFavorite}
-        onToggleFavorite={onToggleFavorite}
         onAdjustQuantity={onAdjustQuantity}
         onPress={onPress}
       />

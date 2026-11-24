@@ -69,6 +69,7 @@ bun install
 | `etape-05-navigation` | Expo Router : onglets, fiche produit par son adresse, modale, lien profond (SCAN-08, SCAN-09) |
 | `etape-06-formulaires` | Formulaires avec React Hook Form, validation Zod, gestion du clavier (SCAN-10, SCAN-11) |
 | `etape-07-depart` | Départ du Jour 3 : API REST simulée avec json-server |
+| `etape-07-donnees` | Données du serveur avec TanStack Query, écritures optimistes, favoris et réglages persistés avec Zustand (SCAN-12 à SCAN-14) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
@@ -85,7 +86,9 @@ src/features/products/   Tout ce qui concerne les produits
   screens/               Écrans (catalogue, fiche produit)
   data/                  Données de démonstration
   utils/                 Fonctions pures (statut de stock)
+  stores/                État conservé sur le téléphone (favoris)
   types.ts               Types TypeScript
+src/features/settings/   L'écran Réglages
 src/shared/              Composants et hooks réutilisables partout
 src/theme/               Couleurs, espacements, typographie
 ```

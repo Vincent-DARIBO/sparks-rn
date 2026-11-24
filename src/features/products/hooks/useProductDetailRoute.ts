@@ -3,8 +3,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getUserMessage } from '@/shared/errors/getUserMessage';
 import { isNotFoundError } from '@/shared/errors/isNotFoundError';
 
+import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
 import useAdjustQuantity from './useAdjustQuantity';
-import useFavoritesContext from './useFavoritesContext';
 import useProduct from './useProduct';
 
 /**
@@ -16,7 +16,8 @@ export default function useProductDetailRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { product, errorProduct, refetchProduct, isRefetchingProduct } = useProduct(id);
-  const { isFavorite, toggleFavorite } = useFavoritesContext();
+  const isFavorite = useIsFavorite(id);
+  const toggleFavorite = useToggleFavorite();
   const { adjustQuantity } = useAdjustQuantity();
 
   // Si l'écran a été ouvert par un lien profond, l'historique est vide :

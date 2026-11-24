@@ -49,7 +49,7 @@ export default function ProductRoute() {
   return (
     <ProductDetailScreen
       product={product}
-      isFavorite={isFavorite(product.id)}
+      isFavorite={isFavorite}
       onToggleFavorite={toggleFavorite}
       onAdjustQuantity={adjustQuantity}
       onBack={goBack}
