@@ -52,6 +52,7 @@ bun install
 | `etape-02-typescript-react` | Types, composants typés, hooks personnalisés (SCAN-01, SCAN-02) |
 | `etape-03-styles` | Thème clair/sombre, mise en page, zones sûres, fiche produit (SCAN-03 à SCAN-05) |
 | `etape-04-depart` | Départ du Jour 2 : organisation par fonctionnalité et alias `@/` |
+| `etape-04-listes` | Recherche, filtres par catégorie, liste fluide avec FlashList (SCAN-06, SCAN-07) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 

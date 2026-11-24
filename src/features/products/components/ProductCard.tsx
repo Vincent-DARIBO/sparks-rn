@@ -1,9 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { memo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import useProductQuantity from '../hooks/useProductQuantity';
 import { useThemedStyles, type Theme } from '@/theme';
 import { categoryLabels, type Product } from '../types';
+import { getStockStatus } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
 
@@ -16,28 +17,26 @@ interface ProductCardProps {
   onAdjustQuantity: (id: string, delta: number) => void;
   /** Appui sur la carte : ouvre la fiche produit. */
   onPress: (id: string) => void;
-  /** Style fourni par le parent : ici la largeur calculée par `useHomeLayout`. */
-  style?: StyleProp<ViewStyle>;
 }
 
 /**
  * Carte produit.
  *
- * - La carte n'a plus AUCUN état local. La QUANTITÉ vient de l'inventaire
- *   partagé (useInventory) : la fiche et les tuiles affichent la même valeur.
- * - Les FAVORIS sont aussi un état du parent (App) : il les compte dans l'en-tête.
- *   La carte reçoit les valeurs en props et signale les changements par callback.
+ * - AUCUN état local, pas même un `useRef` : FlashList recycle les cellules,
+ *   un état local suivrait la cellule et non le produit. La carte affiche
+ *   `product.quantity` (inventaire partagé) et signale les changements au parent.
+ * - Les FAVORIS sont un état du parent (App) : valeur en props, changement par callback.
  *   → Les données descendent, les événements remontent.
- * - Sa LARGEUR est imposée par le parent (prop `style`) : la grille décide.
+ * - `memo` : la carte n'est rendue à nouveau que si ses props changent
+ *   (avec React Compiler activé, ce `memo` deviendrait superflu).
  */
-export default function ProductCard(props: ProductCardProps) {
-  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onPress, style } = props;
+export default memo(function ProductCard(props: ProductCardProps) {
+  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const { quantity, status, increment, decrement } = useProductQuantity(product, onAdjustQuantity);
+  const status = getStockStatus(product.quantity, product.minQuantity);
 
   return (
-    // Tableau de styles : le style de base, puis celui imposé par le parent.
-    <View style={[styles.card, style]}>
+    <View style={styles.card}>
       <View style={styles.main}>
         {/*
           Seule la zone d'information ouvre la fiche. On n'imbrique pas les boutons
@@ -60,20 +59,24 @@ export default function ProductCard(props: ProductCardProps) {
               {product.name}
             </Text>
             <Text style={styles.category}>{categoryLabels[product.category]}</Text>
-            <StockBadge status={status} quantity={quantity} />
+            <StockBadge status={status} quantity={product.quantity} />
           </View>
         </Pressable>
 
         <View style={styles.actions}>
           <Pressable
             style={styles.stepper}
-            onPress={decrement}
-            disabled={quantity === 0}
+            onPress={() => onAdjustQuantity(product.id, -1)}
+            disabled={product.quantity === 0}
             accessibilityLabel="Retirer une unité"
           >
             <Text style={styles.stepperLabel}>−</Text>
           </Pressable>
-          <Pressable style={styles.stepper} onPress={increment} accessibilityLabel="Ajouter une unité">
+          <Pressable
+            style={styles.stepper}
+            onPress={() => onAdjustQuantity(product.id, 1)}
+            accessibilityLabel="Ajouter une unité"
+          >
             <Text style={styles.stepperLabel}>+</Text>
           </Pressable>
         </View>
@@ -88,7 +91,7 @@ export default function ProductCard(props: ProductCardProps) {
       </Pressable>
     </View>
   );
-}
+});
 
 const THUMBNAIL_SIZE = 64;
 
