@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
-import type { Product, ProductFormValues } from '../types';
+import type { ProductFormValues } from '../schema';
+import type { Product } from '../types';
 
 /**
  * L'inventaire complet : la liste des produits ET leurs quantités.
@@ -30,5 +31,13 @@ export default function useInventory(initialProducts: Product[]) {
     setProducts((prev) => prev.map((p) => (p.id === id ? { id, ...values } : p)));
   }, []);
 
-  return { products, adjustQuantity, replaceAll, updateProduct };
+  // Module 6 : ajoute un produit EN TÊTE du catalogue et renvoie son identifiant (pour ouvrir sa fiche).
+  // Identifiant provisoire, unique sur cet appareil : au Jour 3, c'est l'API qui le fournira.
+  const addProduct = useCallback((values: ProductFormValues) => {
+    const id = `local-${Date.now().toString(36)}`;
+    setProducts((prev) => [{ id, ...values }, ...prev]);
+    return id;
+  }, []);
+
+  return { products, adjustQuantity, replaceAll, addProduct, updateProduct };
 }

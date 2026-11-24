@@ -1,5 +1,6 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { FlashList } from '@shopify/flash-list';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import Header from '@/shared/components/Header';
 import CatalogListHeader from '../components/CatalogListHeader';
@@ -20,6 +21,8 @@ interface CatalogScreenProps {
   /** Démo de performances : bascule entre les produits de départ et 5 000 produits. */
   isLargeDataset: boolean;
   onToggleLargeDataset: (value: boolean) => void;
+  /** Bouton « + » de l'en-tête : ouvre le formulaire « Nouveau produit ». */
+  onAddProduct: () => void;
 }
 
 /** Écran d'accueil : recherche, filtres, tuiles de statistiques et catalogue en FlashList. */
@@ -33,6 +36,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
     onOpenProduct,
     isLargeDataset,
     onToggleLargeDataset,
+    onAddProduct,
   } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
@@ -55,7 +59,16 @@ export default function CatalogScreen(props: CatalogScreenProps) {
 
   return (
     <View style={styles.screen}>
-      <Header title="Scan'Stock" subtitle={favoritesLabel} />
+      <Header
+        title="Scan'Stock"
+        subtitle={favoritesLabel}
+        right={
+          // Icône de 28 + hitSlop de 8 de chaque côté = 44 pt, la taille minimale recommandée.
+          <Pressable onPress={onAddProduct} hitSlop={8} accessibilityRole="button" accessibilityLabel="Ajouter un produit">
+            <Ionicons name="add" size={28} color={theme.colors.onHeader} />
+          </Pressable>
+        }
+      />
 
       {/* Hors de la liste : recherche et filtres restent visibles en haut */}
       <View style={[styles.filters, sidePadding]}>
@@ -95,6 +108,11 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         }}
         // Clavier : il se ferme quand on fait défiler, et un appui sur une
         // carte fonctionne du premier coup même clavier ouvert.
+        // FlashList v2 « maintient la position visible » par défaut : quand un produit est ajouté
+        // EN TÊTE, elle défile pour garder à l'écran la carte qui y était, et le haut de la liste
+        // (tuiles, nouveau produit) se retrouve masqué. Désactivé : la liste garde simplement
+        // son décalage de défilement, donc reste tout en haut si elle y était.
+        maintainVisibleContentPosition={{ disabled: true }}
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
       />

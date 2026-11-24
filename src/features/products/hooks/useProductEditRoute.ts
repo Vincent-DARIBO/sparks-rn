@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import type { Product, ProductFormValues } from '../types';
+import type { ProductFormValues } from '../schema';
+import type { Product } from '../types';
 import useInventoryContext from './useInventoryContext';
 
 // On sépare l'identifiant (non modifiable) des champs du formulaire.
