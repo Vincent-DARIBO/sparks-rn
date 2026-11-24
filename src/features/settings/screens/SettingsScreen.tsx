@@ -8,21 +8,14 @@ import { useThemedStyles, type Theme } from '@/theme';
 import SegmentedControl from '../components/SegmentedControl';
 import SettingsRow from '../components/SettingsRow';
 import SettingsSection from '../components/SettingsSection';
+import UpdateStatus from '../components/UpdateStatus';
 import useSettings, { themeOptions } from '../hooks/useSettings';
 
 /** Écran Réglages de la maquette : Apparence, Scanner, Général. */
 export default function SettingsScreen() {
   const { theme, styles } = useThemedStyles(createStyles);
-  const {
-    themeMode,
-    setThemeMode,
-    vibrateOnScan,
-    setVibrateOnScan,
-    openAfterScan,
-    setOpenAfterScan,
-    versionLabel,
-    updateLabel,
-  } = useSettings();
+  const { themeMode, setThemeMode, vibrateOnScan, setVibrateOnScan, openAfterScan, setOpenAfterScan, versionLabel } =
+    useSettings();
   const insets = useSafeAreaInsets();
   // En paysage, l'encoche passe sur un côté : le contenu s'en écarte.
   const sidePadding = {
@@ -32,7 +25,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.screen}>
-      <Header title="Réglages" subtitle="Préférences enregistrées sur cet appareil" />
+      <Header title="Réglages" subtitle="Préférences de cet appareil" />
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
         <SettingsSection title="Apparence" isCard={false}>
           <SegmentedControl label="Thème" options={themeOptions} value={themeMode} onChange={setThemeMode} />
@@ -63,9 +56,7 @@ export default function SettingsScreen() {
           <SettingsRow label="Version" hasSeparator>
             <Text style={styles.valueText}>{versionLabel}</Text>
           </SettingsRow>
-          <SettingsRow label="Mise à jour">
-            <Text style={styles.valueText}>{updateLabel}</Text>
-          </SettingsRow>
+          <UpdateStatus />
         </SettingsSection>
       </ScrollView>
     </View>

@@ -1,18 +1,34 @@
 import * as Updates from 'expo-updates';
 
-/** Lit l'état d'expo-updates, la bibliothèque qui sait quel JavaScript tourne dans l'application. */
-export class UpdatesService {
-  /**
-   * Texte de la ligne « Mise à jour » des Réglages.
-   * Ces valeurs sont des constantes fixées au lancement : la lecture ne peut pas échouer.
-   */
-  static getStatusLabel(): string {
-    // En développement (Expo Go compris), le JavaScript vient de Metro, pas d'un bundle embarqué.
-    // expo-updates est aussi inactif dans un build sans `updates.url`.
-    if (__DEV__ || !Updates.isEnabled) return 'Développement';
+import { UpdatesError } from './UpdatesError';
 
-    const source = Updates.isEmbeddedLaunch ? 'Version intégrée' : 'Mise à jour reçue';
-    // `||` et non `??` : un canal vide ('') doit aussi afficher « — ».
-    return `${source} · canal ${Updates.channel || '—'}`;
+/** Pilote expo-updates, la bibliothèque qui recherche, télécharge et applique les mises à jour à distance. */
+export class UpdatesService {
+  /** Interroge le serveur. Renvoie `true` si une mise à jour est disponible. */
+  static async checkForUpdate(): Promise<boolean> {
+    try {
+      const { isAvailable } = await Updates.checkForUpdateAsync();
+      return isAvailable;
+    } catch (error) {
+      throw UpdatesError.checkFailed(error);
+    }
+  }
+
+  /** Télécharge la mise à jour trouvée : elle sera appliquée au prochain redémarrage. */
+  static async downloadUpdate(): Promise<void> {
+    try {
+      await Updates.fetchUpdateAsync();
+    } catch (error) {
+      throw UpdatesError.downloadFailed(error);
+    }
+  }
+
+  /** Redémarre l'application pour lancer la mise à jour téléchargée. */
+  static async applyUpdate(): Promise<void> {
+    try {
+      await Updates.reloadAsync();
+    } catch (error) {
+      throw UpdatesError.reloadFailed(error);
+    }
   }
 }
