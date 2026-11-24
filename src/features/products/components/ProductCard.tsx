@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
-import { useFavoritesStore } from '../stores/favoritesStore';
+import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
 import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
 import { getStockStatus, getStockText } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
@@ -25,15 +25,23 @@ interface ProductCardProps {
  *   `product.quantity` (données du serveur) et signale les changements au parent.
  *   Le badge de stock, lui, se souvient de la quantité précédente pour « pulser » :
  *   il la mémorise AVEC l'id du produit, ce qui distingue un recyclage d'un vrai changement.
- * - Les FAVORIS : la carte lit l'étoile de son produit dans le store Zustand.
- * - `memo` : la carte n'est pas re-rendue par son parent si ses props sont identiques
+ * - Les FAVORIS : la carte lit elle-même SON étoile dans le store Zustand (sélecteur
+ *   `useIsFavorite`). Parmi les cartes, seule celle dont l'étoile change se re-rend.
+ *   Le profiler montrait l'inverse quand la carte lisait TOUT le store
+ *   (`const { favoriteIds } = useFavoritesStore()`) : sans sélecteur, le hook renvoie l'état
+ *   entier du store, un nouvel objet à chaque modification, donc CHAQUE carte se re-rendait
+ *   (« Hooks changed ») à chaque changement du store. Avec un sélecteur, la carte ne se re-rend
+ *   que si la valeur renvoyée change : ici un booléen, qui ne bouge pas quand on touche
+ *   l'étoile d'un AUTRE produit.
+ * - `memo` : la carte n'est rendue à nouveau que si ses props changent. Il ne sert à rien
+ *   si une prop change à chaque rendu : voir `onPress` dans `useCatalogRoute`.
  *   (avec React Compiler activé, ce `memo` deviendrait superflu).
  */
 export default memo(function ProductCard(props: ProductCardProps) {
   const { product, onAdjustQuantity, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const { favoriteIds, toggleFavorite } = useFavoritesStore();
-  const isFavorite = favoriteIds.includes(product.id);
+  const isFavorite = useIsFavorite(product.id);
+  const toggleFavorite = useToggleFavorite();
   const status = getStockStatus(product.quantity, product.minQuantity);
 
   return (

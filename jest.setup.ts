@@ -17,6 +17,10 @@ jest.mock('react-native-safe-area-context', () => mockSafeAreaContext);
 // Doublure fournie par react-native-keyboard-controller : KeyboardAwareScrollView, KeyboardToolbar…
 jest.mock('react-native-keyboard-controller', () => require('react-native-keyboard-controller/jest'));
 
+// Reanimated et Worklets sont des modules natifs : sous Node, leur import plante. Leur doublure Jest
+// est fournie par la bibliothèque et se branche dans la clé `resolver` du bloc `jest` de package.json
+// (« react-native-reanimated/jest/resolver »), car un package.json n'accepte pas de commentaire.
+
 // Stockage clé-valeur en mémoire : le store des réglages (thème) lit le stockage dès son import,
 // et expo-sqlite est natif. Une Map suffit, vidée à chaque lancement de Jest.
 jest.mock('@/shared/services/StorageService', () => {

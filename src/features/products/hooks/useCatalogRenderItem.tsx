@@ -12,7 +12,12 @@ interface UseCatalogRenderItemParams {
 }
 
 /**
- * Fournit le `renderItem` de la liste (useCallback sur ses dépendances).
+ * Fournit un `renderItem` STABLE (useCallback) : FlashList ne recrée pas
+ * toutes les cellules à chaque rendu de l'écran (saisie de recherche, favori ajouté, etc.).
+ * Cela suppose que les callbacks reçus soient eux-mêmes stables : si l'un d'eux change à
+ * chaque rendu, `renderItem` change aussi (c'est une dépendance) et FlashList re-rend
+ * toutes les cellules montées. Les favoris n'y figurent pas : chaque carte lit son étoile
+ * dans le store.
  * Fichier `.tsx` : le hook retourne du JSX.
  */
 export default function useCatalogRenderItem(params: UseCatalogRenderItemParams) {

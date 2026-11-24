@@ -90,6 +90,7 @@ bun install
 | `etape-08-natif` | Fonctionnalités natives : scanner de codes-barres, photo et emplacement d'un produit (SCAN-15, SCAN-16) |
 | `etape-09-animations` | Animations avec Reanimated, suppression d'un produit par glissement (SCAN-17, SCAN-18) |
 | `etape-10-depart` | Départ du Jour 4 : le catalogue ralentit, à vous de trouver pourquoi |
+| `etape-10-qualite` | Tests Jest du formulaire et du stock, scénario Maestro, catalogue redevenu fluide (SCAN-19 à SCAN-22) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
