@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getUserMessage } from '@/shared/errors/getUserMessage';
 import { isNotFoundError } from '@/shared/errors/isNotFoundError';
 
-import { showReadOnlyNotice } from '../utils/showReadOnlyNotice';
+import useAdjustQuantity from './useAdjustQuantity';
 import useFavoritesContext from './useFavoritesContext';
 import useProduct from './useProduct';
 
@@ -17,6 +17,7 @@ export default function useProductDetailRoute() {
   const router = useRouter();
   const { product, errorProduct, refetchProduct, isRefetchingProduct } = useProduct(id);
   const { isFavorite, toggleFavorite } = useFavoritesContext();
+  const { adjustQuantity } = useAdjustQuantity();
 
   // Si l'écran a été ouvert par un lien profond, l'historique est vide :
   // on retombe alors sur le catalogue.
@@ -31,7 +32,7 @@ export default function useProductDetailRoute() {
     isRefetchingProduct,
     isFavorite,
     toggleFavorite,
-    adjustQuantity: showReadOnlyNotice,
+    adjustQuantity,
     goBack,
   };
 }

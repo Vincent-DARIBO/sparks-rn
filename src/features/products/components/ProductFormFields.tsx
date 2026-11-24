@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemedStyles, type Theme } from '@/theme';
 
 import type { ProductFormValues } from '../schema';
+import { MAX_QUANTITY } from '../types';
 import { sanitizeBarcode } from '../utils/sanitizeBarcode';
 import CategoryChips from './CategoryChips';
 import FormField from './FormField';
@@ -124,6 +125,7 @@ export default function ProductFormFields(props: ProductFormFieldsProps) {
               <NumberStepper
                 label="Quantité"
                 value={value}
+                max={MAX_QUANTITY}
                 // Un compteur n'a pas de « sortie de champ » : chaque appui compte comme une saisie
                 // terminée (onBlur), pour que l'erreur s'affiche ou disparaisse aussitôt.
                 onChange={(nextValue) => {

@@ -6,6 +6,8 @@ interface NumberStepperProps {
   label: string;
   value: number;
   onChange: (value: number) => void;
+  /** Valeur maximale : « + » est désactivé quand elle est atteinte (absente = pas de maximum). */
+  max?: number;
   /** Message d'erreur affiché sous le compteur (absent = pas d'erreur). */
   error?: string;
 }
@@ -14,12 +16,13 @@ interface NumberStepperProps {
  * Compteur − / + de la maquette (Quantité, Seuil d'alerte).
  * Composant CONTRÔLÉ : il affiche `value` et signale les changements par `onChange`,
  * exactement l'interface attendue par le `Controller` de React Hook Form.
- * « − » est désactivé à 0 : la valeur n'est jamais négative.
+ * « − » est désactivé à 0 (jamais de valeur négative), « + » au maximum `max` s'il est fourni.
  */
 export default function NumberStepper(props: NumberStepperProps) {
-  const { label, value, onChange, error } = props;
+  const { label, value, onChange, error, max = Infinity } = props;
   const { styles } = useThemedStyles(createStyles);
   const isAtMinimum = value <= 0;
+  const isAtMaximum = value >= max;
 
   return (
     <View style={[styles.box, error ? styles.boxError : null]}>
@@ -39,10 +42,12 @@ export default function NumberStepper(props: NumberStepperProps) {
           {value}
         </Text>
         <Pressable
-          style={styles.button}
+          style={[styles.button, isAtMaximum && styles.disabled]}
           onPress={() => onChange(value + 1)}
+          disabled={isAtMaximum}
           accessibilityRole="button"
           accessibilityLabel={`Augmenter : ${label}`}
+          accessibilityState={{ disabled: isAtMaximum }}
         >
           <Text style={styles.buttonLabel}>+</Text>
         </Pressable>

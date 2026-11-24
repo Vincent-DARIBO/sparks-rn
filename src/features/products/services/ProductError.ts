@@ -10,6 +10,19 @@ export class ProductError extends AppError {
     );
   }
 
+  static createFailed(technicalDetails?: unknown): ProductError {
+    return new ProductError('create_failed', 'Impossible de créer le produit', 'create_failed', technicalDetails);
+  }
+
+  static updateFailed(technicalDetails?: unknown): ProductError {
+    return new ProductError(
+      'update_failed',
+      "Impossible d'enregistrer les modifications du produit",
+      'update_failed',
+      technicalDetails,
+    );
+  }
+
   static notFound(technicalDetails?: unknown): ProductError {
     return new ProductError('not_found', 'Ce produit est introuvable', 'not_found', technicalDetails);
   }

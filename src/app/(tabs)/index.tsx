@@ -20,8 +20,10 @@ export default function CatalogRoute() {
     products,
     isLoadingProducts,
     errorMessage,
-    refetchProducts,
-    isRefetchingProducts,
+    pullToRefresh,
+    isPullRefreshing,
+    retry,
+    isRetrying,
     isFavorite,
     toggleFavorite,
     favoritesCount,
@@ -32,13 +34,11 @@ export default function CatalogRoute() {
     addProduct,
   } = useCatalogRoute();
 
-  const retry = () => void refetchProducts();
-
   // Pas encore de données (premier chargement) : écran de chargement, ou d'erreur s'il a échoué.
   if (isLoadingProducts || !products) {
     const header = <Header title="Scan'Stock" />;
     return errorMessage ? (
-      <ErrorView header={header} message={errorMessage} onRetry={retry} isRetrying={isRefetchingProducts} />
+      <ErrorView header={header} message={errorMessage} onRetry={retry} isRetrying={isRetrying} />
     ) : (
       <LoadingView header={header} />
     );
@@ -55,13 +55,14 @@ export default function CatalogRoute() {
       isLargeDataset={isLargeDataset}
       onToggleLargeDataset={setIsLargeDataset}
       onAddProduct={addProduct}
-      refreshing={isRefetchingProducts}
-      onRefresh={retry}
+      // Indicateur de tirage : seulement pour un rechargement demandé par l'utilisateur.
+      refreshing={isPullRefreshing}
+      onRefresh={pullToRefresh}
       // Données déjà affichées : une actualisation en échec n'efface ni la liste, ni la recherche,
       // ni le filtre. L'erreur s'affiche en bandeau au-dessus.
       errorBanner={
         errorMessage ? (
-          <ErrorView compact message={errorMessage} onRetry={retry} isRetrying={isRefetchingProducts} />
+          <ErrorView compact message={errorMessage} onRetry={retry} isRetrying={isRetrying} />
         ) : null
       }
     />

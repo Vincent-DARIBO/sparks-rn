@@ -36,18 +36,34 @@ export class ApiError extends AppError {
   }
 }
 
+// Méthodes HTTP utilisées par l'application : GET lit, POST crée, PATCH modifie une partie d'une ressource.
+type HttpMethod = 'GET' | 'POST' | 'PATCH';
+
+interface ApiRequestOptions {
+  method?: HttpMethod;
+  /** Objet envoyé au serveur, converti en JSON. */
+  body?: unknown;
+}
+
 // Renvoie le corps JSON de la réponse, sans le typer : c'est au service de le VALIDER.
-export async function apiFetch(path: string): Promise<unknown> {
+export async function apiFetch(path: string, options: ApiRequestOptions = {}): Promise<unknown> {
+  const { method = 'GET', body } = options;
   // AbortController : une « télécommande » qui annule la requête. Au bout de 8 s sans réponse,
   // on appuie dessus : fetch échoue au lieu d'attendre indéfiniment un serveur muet.
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const hasBody = body !== undefined;
+  // Content-Type prévient le serveur que le corps est du JSON (sinon il ne saurait pas le lire).
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (hasBody) headers['Content-Type'] = 'application/json';
 
   let response: Response;
   try {
     response = await fetch(`${BASE_URL}${path}`, {
+      method,
       signal: controller.signal,
-      headers: { Accept: 'application/json' },
+      headers,
+      body: hasBody ? JSON.stringify(body) : undefined,
     });
   } catch (error) {
     // fetch ne lève une exception QUE s'il n'y a aucune réponse : réseau coupé, serveur arrêté, délai dépassé.

@@ -5,8 +5,8 @@ import { isNotFoundError } from '@/shared/errors/isNotFoundError';
 
 import type { ProductFormValues } from '../schema';
 import type { Product } from '../types';
-import { showReadOnlyNotice } from '../utils/showReadOnlyNotice';
 import useProduct from './useProduct';
+import useUpdateProduct from './useUpdateProduct';
 
 // On sépare l'identifiant (non modifiable) des champs du formulaire.
 function toFormValues({ id: _productId, ...formValues }: Product): ProductFormValues {
@@ -18,9 +18,22 @@ export default function useProductEditRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { product, errorProduct, refetchProduct, isRefetchingProduct } = useProduct(id);
+  const { updateProduct } = useUpdateProduct(id);
 
   // Fermer la modale = revenir à l'écran du dessous (la fiche), sans rien enregistrer.
   const cancel = () => router.back();
+
+  const save = async (values: ProductFormValues) => {
+    try {
+      // La modale ne se ferme qu'APRÈS la réponse du serveur, et seulement en cas de succès.
+      await updateProduct(values);
+    } catch {
+      // Échec déjà signalé par l'alerte globale : la modale reste ouverte, avec la saisie.
+      return;
+    }
+    // Navigation HORS du try : une erreur de navigation ne doit pas être prise pour un échec d'enregistrement.
+    router.back();
+  };
 
   return {
     id,
@@ -30,7 +43,6 @@ export default function useProductEditRoute() {
     refetchProduct,
     isRefetchingProduct,
     cancel,
-    // Lecture seule : la modale reste ouverte avec la saisie, rien n'est modifié.
-    save: showReadOnlyNotice,
+    save,
   };
 }

@@ -20,6 +20,9 @@ export interface Product {
   minQuantity: number;
 }
 
+/** Quantité maximale d'un produit : partagée par le schéma du formulaire et les boutons + . */
+export const MAX_QUANTITY = 9999;
+
 /** État du stock d'un produit, calculé à partir de la quantité et du seuil. */
 export type StockStatus = 'out' | 'low' | 'ok';
 
