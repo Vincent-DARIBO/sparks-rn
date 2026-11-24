@@ -13,14 +13,27 @@ export default function ScannerRoute() {
   const { scannedBarcode, scannedProduct, handleBarcodeScanned, openProduct, createProduct } = useScanResult();
 
   // Trois cas : rien lu encore, produit connu, code inconnu.
+  // `key={scannedBarcode}` : quand la `key` change, React démonte l'ancienne carte et en monte une
+  // nouvelle, qui rejoue son animation d'entrée. Un nouveau code = une nouvelle entrée ; un simple
+  // nouveau rendu (le stock du produit affiché change) garde la même `key` : pas d'entrée rejouée.
   let resultCard = null;
   if (scannedProduct) {
     resultCard = (
-      <ScannedProductCard kind="known" product={scannedProduct} onOpen={() => openProduct(scannedProduct.id)} />
+      <ScannedProductCard
+        key={scannedBarcode}
+        kind="known"
+        product={scannedProduct}
+        onOpen={() => openProduct(scannedProduct.id)}
+      />
     );
   } else if (scannedBarcode) {
     resultCard = (
-      <ScannedProductCard kind="unknown" barcode={scannedBarcode} onCreate={() => createProduct(scannedBarcode)} />
+      <ScannedProductCard
+        key={scannedBarcode}
+        kind="unknown"
+        barcode={scannedBarcode}
+        onCreate={() => createProduct(scannedBarcode)}
+      />
     );
   }
 
