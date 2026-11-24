@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import useStock from '../hooks/useStock';
 import { useThemedStyles, type Theme } from '../theme';
@@ -10,6 +10,8 @@ interface ProductCardProps {
   isFavorite: boolean;
   /** Callback remonté au parent : c'est lui qui possède l'état des favoris. */
   onToggleFavorite: (id: string) => void;
+  /** Style fourni par le parent : ici la largeur calculée par `useHomeLayout`. */
+  style?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -20,9 +22,10 @@ interface ProductCardProps {
  * - Les FAVORIS sont un état du parent (App) : il les compte dans l'en-tête.
  *   La carte reçoit la valeur en prop et signale les changements par callback.
  *   → Les données descendent, les événements remontent.
+ * - Sa LARGEUR est imposée par le parent (prop `style`) : la grille décide.
  */
 export default function ProductCard(props: ProductCardProps) {
-  const { product, isFavorite, onToggleFavorite } = props;
+  const { product, isFavorite, onToggleFavorite, style } = props;
   const { styles } = useThemedStyles(createStyles);
   const { quantity, status, increment, decrement } = useStock(
     product.quantity,
@@ -30,7 +33,8 @@ export default function ProductCard(props: ProductCardProps) {
   );
 
   return (
-    <View style={styles.card}>
+    // Tableau de styles : le style de base, puis celui imposé par le parent.
+    <View style={[styles.card, style]}>
       {/* Image locale provisoire : require() est résolu au moment du build par Metro */}
       <Image source={require('../../assets/icon.png')} style={styles.thumbnail} />
 
@@ -77,7 +81,6 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       borderWidth: StyleSheet.hairlineWidth, // la ligne la plus fine affichable : sépare la carte du fond
       borderColor: colors.border,
       padding: spacing.md,
-      marginBottom: spacing.md,
       gap: spacing.md,
     },
     thumbnail: {
