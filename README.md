@@ -50,6 +50,7 @@ bun install
 | `etape-00-depart` | Projet généré par `create-expo-app` |
 | `etape-01-fondations` | Jeu de données, écran d'accueil, premiers pas avec React Native DevTools |
 | `etape-02-typescript-react` | Types, composants typés, hooks personnalisés (SCAN-01, SCAN-02) |
+| `etape-03-styles` | Thème clair/sombre, mise en page, zones sûres, fiche produit (SCAN-03 à SCAN-05) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 

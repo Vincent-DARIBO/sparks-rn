@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -7,6 +8,8 @@ import { useThemedStyles, type Theme } from '../theme';
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  /** Élément optionnel affiché à gauche du titre (ex. bouton retour de la fiche). */
+  left?: ReactNode;
 }
 
 /**
@@ -16,7 +19,7 @@ interface HeaderProps {
  * Il respecte l'encoche, la Dynamic Island et la barre d'état de chaque appareil.
  */
 export default function Header(props: HeaderProps) {
-  const { title, subtitle } = props;
+  const { title, subtitle, left } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   // Hauteur de l'encoche / Dynamic Island / barre d'état, propre à chaque appareil.
   const insets = useSafeAreaInsets();
@@ -29,9 +32,17 @@ export default function Header(props: HeaderProps) {
 
   return (
     <View style={[styles.container, safePadding]}>
-      <Text style={styles.title}>{title}</Text>
-      {/* Rendu conditionnel : rien n'est affiché si subtitle est absent */}
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      <View style={styles.row}>
+        {left}
+        <View style={styles.texts}>
+          {/* numberOfLines : un nom de produit trop long est tronqué au lieu de pousser l'en-tête */}
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
+          {/* Rendu conditionnel : rien n'est affiché si subtitle est absent */}
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        </View>
+      </View>
     </View>
   );
 }
@@ -43,6 +54,14 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
     container: {
       paddingBottom: spacing.lg,
       backgroundColor: colors.header,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    texts: {
+      flex: 1, // le titre prend la place laissée par l'élément de gauche
     },
     title: {
       ...typography.title,

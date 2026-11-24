@@ -10,6 +10,8 @@ interface ProductCardProps {
   isFavorite: boolean;
   /** Callback remonté au parent : c'est lui qui possède l'état des favoris. */
   onToggleFavorite: (id: string) => void;
+  /** Appui sur la carte : ouvre la fiche produit. */
+  onPress: (id: string) => void;
   /** Style fourni par le parent : ici la largeur calculée par `useHomeLayout`. */
   style?: StyleProp<ViewStyle>;
 }
@@ -25,7 +27,7 @@ interface ProductCardProps {
  * - Sa LARGEUR est imposée par le parent (prop `style`) : la grille décide.
  */
 export default function ProductCard(props: ProductCardProps) {
-  const { product, isFavorite, onToggleFavorite, style } = props;
+  const { product, isFavorite, onToggleFavorite, onPress, style } = props;
   const { styles } = useThemedStyles(createStyles);
   const { quantity, status, increment, decrement } = useStock(
     product.quantity,
@@ -35,16 +37,32 @@ export default function ProductCard(props: ProductCardProps) {
   return (
     // Tableau de styles : le style de base, puis celui imposé par le parent.
     <View style={[styles.card, style]}>
-      {/* Image locale provisoire : require() est résolu au moment du build par Metro */}
-      <Image source={require('../../assets/icon.png')} style={styles.thumbnail} />
+      <View style={styles.main}>
+        {/*
+          Seule la zone d'information ouvre la fiche. On n'imbrique pas les boutons
+          −, + et ★ dans ce Pressable : un bouton désactivé (− à 0) laisserait
+          l'appui remonter au parent et ouvrirait la fiche, et le lecteur d'écran
+          verrait toute la carte comme un seul bouton.
+          `style` peut être une fonction de l'état d'appui : la zone s'enfonce pendant l'appui.
+        */}
+        <Pressable
+          onPress={() => onPress(product.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`Ouvrir la fiche de ${product.name}`}
+          style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
+        >
+          {/* Image locale provisoire : require() est résolu au moment du build par Metro */}
+          <Image source={require('../../assets/icon.png')} style={styles.thumbnail} />
 
-      <View style={styles.body}>
-        <Text style={styles.brand}>{product.brand}</Text>
-        <Text style={styles.name} numberOfLines={2}>
-          {product.name}
-        </Text>
-        <Text style={styles.category}>{categoryLabels[product.category]}</Text>
-        <StockBadge status={status} quantity={quantity} />
+          <View style={styles.body}>
+            <Text style={styles.brand}>{product.brand}</Text>
+            <Text style={styles.name} numberOfLines={2}>
+              {product.name}
+            </Text>
+            <Text style={styles.category}>{categoryLabels[product.category]}</Text>
+            <StockBadge status={status} quantity={quantity} />
+          </View>
+        </Pressable>
 
         <View style={styles.actions}>
           <Pressable
@@ -72,6 +90,8 @@ export default function ProductCard(props: ProductCardProps) {
   );
 }
 
+const THUMBNAIL_SIZE = 64;
+
 const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
     card: {
@@ -83,13 +103,24 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       padding: spacing.md,
       gap: spacing.md,
     },
+    main: {
+      flex: 1, // prend toute la largeur restante avant l'étoile
+      gap: spacing.xs,
+    },
+    info: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    infoPressed: {
+      opacity: 0.7,
+    },
     thumbnail: {
-      width: 64,
-      height: 64,
+      width: THUMBNAIL_SIZE,
+      height: THUMBNAIL_SIZE,
       borderRadius: radius.sm,
     },
     body: {
-      flex: 1, // prend toute la largeur restante entre l'image et l'étoile
+      flex: 1, // prend toute la largeur restante à droite de l'image
       gap: spacing.xs,
     },
     brand: {
@@ -108,6 +139,8 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       flexDirection: 'row',
       gap: spacing.sm,
       marginTop: spacing.xs,
+      // Décalage de la largeur de l'image : les boutons restent alignés sous le texte.
+      marginLeft: THUMBNAIL_SIZE + spacing.md,
     },
     stepper: {
       width: 36,
