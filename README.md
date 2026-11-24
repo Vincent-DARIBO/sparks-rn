@@ -89,6 +89,7 @@ src/features/products/   Tout ce qui concerne les produits
   stores/                État conservé sur le téléphone (favoris)
   types.ts               Types TypeScript
 src/features/settings/   L'écran Réglages
+src/features/scanner/    La caméra et la lecture des codes-barres
 src/shared/              Composants et hooks réutilisables partout
 src/theme/               Couleurs, espacements, typographie
 ```
