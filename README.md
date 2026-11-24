@@ -26,7 +26,12 @@ Avant de pousser du code :
 ```bash
 bunx tsc --noEmit   # vérification des types
 bunx expo lint      # ESLint
+bun run test        # tests Jest (à partir du Jour 4)
 ```
+
+> `bun run test` lance Jest. `bun test`, sans `run`, lance l'exécuteur de tests
+> de Bun, qui ne convient pas à ce projet. Au tout premier lancement, Jest peut
+> rester silencieux une minute ou deux si `watchman` indexe le dépôt.
 
 ## L'API de démonstration (à partir du Jour 3)
 

@@ -6,6 +6,9 @@
     // Expo (Metro) lit ces chemins directement : aucune configuration Babel nécessaire.
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // Depuis TypeScript 6, les types globaux (@types/*) ne sont plus inclus automatiquement.
+    // `jest` déclare describe, it, expect, jest…
+    "types": ["jest"]
   }
 }
