@@ -22,12 +22,17 @@
  * Même application, réorganisée par fonctionnalité : src/features/products pour
  * le produit, src/shared pour ce qui sert à plusieurs écrans, src/theme inchangé.
  * L'alias `@/` (tsconfig.json) pointe sur src/ et évite les `../../..`.
+ *
+ * SCAN-06 : recherche (nom, marque, code-barres) et filtres par catégorie,
+ * catalogue en FlatList, icônes Ionicons. L'inventaire est remonté dans
+ * useInventory : la carte et la fiche affichent toujours la même quantité.
  */
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { products } from '@/features/products/data/products';
+import { products as initialProducts } from '@/features/products/data/products';
 import useCatalog from '@/features/products/hooks/useCatalog';
+import useInventory from '@/features/products/hooks/useInventory';
 import useSelectedProduct from '@/features/products/hooks/useSelectedProduct';
 import CatalogScreen from '@/features/products/screens/CatalogScreen';
 import ProductDetailScreen from '@/features/products/screens/ProductDetailScreen';
@@ -36,6 +41,8 @@ export default function App() {
   // L'état des favoris vit dans le parent commun à l'en-tête et aux cartes.
   // « Pâte à tartiner 400 g » (id '1') est en favori au lancement.
   const { toggleFavorite, isFavorite, favoritesLabel } = useCatalog(['1']);
+  // Une seule source de vérité pour les quantités, partagée par les deux écrans.
+  const { products, adjustQuantity } = useInventory(initialProducts);
   // Aucun produit sélectionné → catalogue ; un produit sélectionné → sa fiche.
   const { selectedProduct, selectProduct, clearSelection } = useSelectedProduct(products);
 
@@ -47,6 +54,7 @@ export default function App() {
           product={selectedProduct}
           isFavorite={isFavorite(selectedProduct.id)}
           onToggleFavorite={toggleFavorite}
+          onAdjustQuantity={adjustQuantity}
           onBack={clearSelection}
         />
       ) : (
@@ -54,6 +62,7 @@ export default function App() {
           products={products}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
+          onAdjustQuantity={adjustQuantity}
           favoritesLabel={favoritesLabel}
           onOpenProduct={selectProduct}
         />

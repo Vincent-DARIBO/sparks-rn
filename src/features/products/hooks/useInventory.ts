@@ -1,0 +1,25 @@
+import { useCallback, useState } from 'react';
+
+import type { Product } from '../types';
+
+/**
+ * L'inventaire complet : la liste des produits ET leurs quantités.
+ *
+ * Changement par rapport au Jour 1 : la quantité n'est plus un état local
+ * de chaque carte (ancien hook `useStock`), elle est REMONTÉE ici.
+ * Une seule source de vérité : la carte, la fiche et les tuiles de
+ * statistiques affichent toujours la même quantité.
+ */
+export default function useInventory(initialProducts: Product[]) {
+  const [products, setProducts] = useState(initialProducts);
+
+  // Ajoute `delta` (positif ou négatif) au stock d'un produit, jamais sous zéro.
+  // Immutabilité : on crée un nouveau tableau et un nouvel objet pour le produit modifié.
+  const adjustQuantity = useCallback((id: string, delta: number) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, quantity: Math.max(0, p.quantity + delta) } : p)),
+    );
+  }, []);
+
+  return { products, adjustQuantity };
+}
