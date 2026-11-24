@@ -47,6 +47,12 @@ export const productSchema = z.object({
 // à partir du schéma. Ajouter un champ au schéma l'ajoute au type, sans rien écrire à la main.
 export type ProductFormValues = z.infer<typeof productSchema>;
 
+// Un produit renvoyé par le serveur = un produit de formulaire + l'identifiant généré par le serveur.
+export const apiProductSchema = productSchema.extend({ id: z.string() });
+
+// Validation de la liste complète : une réponse mal formée lève une erreur au lieu de polluer le cache.
+export const apiProductListSchema = z.array(apiProductSchema);
+
 // Garde-fou : si une catégorie est ajoutée au type Category sans l'être au schéma
 // (ou l'inverse), TypeScript signale une erreur sur cette ligne.
 type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;

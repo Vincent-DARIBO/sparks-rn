@@ -1,21 +1,37 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import useInventoryContext from './useInventoryContext';
+import { getUserMessage } from '@/shared/errors/getUserMessage';
+import { isNotFoundError } from '@/shared/errors/isNotFoundError';
+
+import { showReadOnlyNotice } from '../utils/showReadOnlyNotice';
+import useFavoritesContext from './useFavoritesContext';
+import useProduct from './useProduct';
 
 /**
  * Logique de la route `/product/[id]` : lecture du paramètre d'URL,
- * recherche du produit, retour.
+ * produit chargé depuis l'API, favoris, retour.
  */
 export default function useProductDetailRoute() {
   // Les paramètres d'URL sont TOUJOURS des chaînes (ou des tableaux de chaînes).
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { products, isFavorite, toggleFavorite, adjustQuantity } = useInventoryContext();
+  const { product, errorProduct, refetchProduct, isRefetchingProduct } = useProduct(id);
+  const { isFavorite, toggleFavorite } = useFavoritesContext();
 
-  const product = products.find((p) => p.id === id);
   // Si l'écran a été ouvert par un lien profond, l'historique est vide :
   // on retombe alors sur le catalogue.
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
-  return { id, product, isFavorite, toggleFavorite, adjustQuantity, goBack };
+  return {
+    id,
+    product,
+    isProductNotFound: isNotFoundError(errorProduct),
+    errorMessage: errorProduct ? getUserMessage(errorProduct) : null,
+    refetchProduct,
+    isRefetchingProduct,
+    isFavorite,
+    toggleFavorite,
+    adjustQuantity: showReadOnlyNotice,
+    goBack,
+  };
 }

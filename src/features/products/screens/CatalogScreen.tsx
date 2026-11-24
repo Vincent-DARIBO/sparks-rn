@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import type { ReactNode } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -23,6 +24,11 @@ interface CatalogScreenProps {
   onToggleLargeDataset: (value: boolean) => void;
   /** Bouton « + » de l'en-tête : ouvre le formulaire « Nouveau produit ». */
   onAddProduct: () => void;
+  /** Module 7 : tirer la liste vers le bas recharge les données du serveur. */
+  refreshing: boolean;
+  onRefresh: () => void;
+  /** Bandeau d'erreur fourni par la route quand une actualisation échoue (absent sinon). */
+  errorBanner?: ReactNode;
 }
 
 /** Écran d'accueil : recherche, filtres, tuiles de statistiques et catalogue en FlashList. */
@@ -37,6 +43,9 @@ export default function CatalogScreen(props: CatalogScreenProps) {
     isLargeDataset,
     onToggleLargeDataset,
     onAddProduct,
+    refreshing,
+    onRefresh,
+    errorBanner,
   } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
@@ -69,6 +78,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
           </Pressable>
         }
       />
+      {errorBanner}
 
       {/* Hors de la liste : recherche et filtres restent visibles en haut */}
       <View style={[styles.filters, sidePadding]}>
@@ -79,7 +89,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
       {/*
         FlashList RECYCLE les cellules : une cellule sortie de l'écran est réutilisée
         pour un autre produit. Un état local dans la carte suivrait donc la cellule,
-        pas le produit : la quantité vient de l'inventaire (useInventory).
+        pas le produit : la quantité vient des données du serveur.
       */}
       <FlashList
         data={filtered}
@@ -115,6 +125,8 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         maintainVisibleContentPosition={{ disabled: true }}
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
     </View>
   );

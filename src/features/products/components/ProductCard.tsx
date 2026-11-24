@@ -13,7 +13,7 @@ interface ProductCardProps {
   isFavorite: boolean;
   /** Callback remonté au parent : c'est lui qui possède l'état des favoris. */
   onToggleFavorite: (id: string) => void;
-  /** Boutons − / + : l'inventaire partagé (useInventory) appartient au parent. */
+  /** Boutons − / + : les données du stock appartiennent au parent. */
   onAdjustQuantity: (id: string, delta: number) => void;
   /** Appui sur la carte : ouvre la fiche produit. */
   onPress: (id: string) => void;
@@ -24,7 +24,7 @@ interface ProductCardProps {
  *
  * - AUCUN état local, pas même un `useRef` : FlashList recycle les cellules,
  *   un état local suivrait la cellule et non le produit. La carte affiche
- *   `product.quantity` (inventaire partagé) et signale les changements au parent.
+ *   `product.quantity` (données du serveur) et signale les changements au parent.
  * - Les FAVORIS sont un état du parent (App) : valeur en props, changement par callback.
  *   → Les données descendent, les événements remontent.
  * - `memo` : la carte n'est rendue à nouveau que si ses props changent

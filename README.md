@@ -81,6 +81,7 @@ src/app/                 Routes Expo Router : un fichier = un écran
 src/features/products/   Tout ce qui concerne les produits
   components/            Composants d'affichage (carte, badge, ligne d'information)
   hooks/                 État et logique (stock, favoris, catalogue)
+  services/              Accès à l'API et erreurs associées
   screens/               Écrans (catalogue, fiche produit)
   data/                  Données de démonstration
   utils/                 Fonctions pures (statut de stock)
