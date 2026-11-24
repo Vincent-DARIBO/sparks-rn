@@ -1,8 +1,8 @@
 import { Image, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import useStock from '../hooks/useStock';
-import { useThemedStyles, type Theme } from '../theme';
-import { categoryLabels, type Product } from '../types/product';
+import { useThemedStyles, type Theme } from '@/theme';
+import { categoryLabels, type Product } from '../types';
 import StockBadge from './StockBadge';
 
 interface ProductCardProps {
@@ -52,7 +52,7 @@ export default function ProductCard(props: ProductCardProps) {
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
           {/* Image locale provisoire : require() est résolu au moment du build par Metro */}
-          <Image source={require('../../assets/icon.png')} style={styles.thumbnail} />
+          <Image source={require('../../../../assets/icon.png')} style={styles.thumbnail} />
 
           <View style={styles.body}>
             <Text style={styles.brand}>{product.brand}</Text>

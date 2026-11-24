@@ -1,14 +1,14 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Header from '../components/Header';
+import Header from '@/shared/components/Header';
 import ProductCard from '../components/ProductCard';
-import StatTile from '../components/StatTile';
+import StatTile from '@/shared/components/StatTile';
 import useHomeLayout from '../hooks/useHomeLayout';
 import useStockStats from '../hooks/useStockStats';
-import { useThemedStyles, type Theme } from '../theme';
-import type { Product } from '../types/product';
+import { useThemedStyles, type Theme } from '@/theme';
+import type { Product } from '../types';
 
-interface HomeScreenProps {
+interface CatalogScreenProps {
   products: Product[];
   isFavorite: (id: string) => boolean;
   onToggleFavorite: (id: string) => void;
@@ -17,7 +17,7 @@ interface HomeScreenProps {
 }
 
 /** Écran d'accueil : tuiles de statistiques et grille responsive du catalogue. */
-export default function HomeScreen(props: HomeScreenProps) {
+export default function CatalogScreen(props: CatalogScreenProps) {
   const { products, isFavorite, onToggleFavorite, favoritesLabel, onOpenProduct } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, cardWidth } = useHomeLayout();

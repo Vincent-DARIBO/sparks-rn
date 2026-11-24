@@ -1,4 +1,4 @@
-// Point d'entrée unique du thème : `import { useTheme } from '../theme'`.
+// Point d'entrée unique du thème : `import { useTheme } from '@/theme'`.
 // Les hooks sont des exports par défaut : on les réexporte par leur nom.
 export * from './colors';
 export * from './tokens';

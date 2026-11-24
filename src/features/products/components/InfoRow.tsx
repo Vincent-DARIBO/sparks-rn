@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { useThemedStyles, type Theme } from '../theme';
+import { useThemedStyles, type Theme } from '@/theme';
 
 interface InfoRowProps {
   label: string;

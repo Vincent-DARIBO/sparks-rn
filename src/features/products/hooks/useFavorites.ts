@@ -1,4 +1,4 @@
-import useToggleSet from './useToggleSet';
+import useToggleSet from '@/shared/hooks/useToggleSet';
 
 /**
  * Favoris de l'utilisateur : spécialisation de `useToggleSet` pour des
