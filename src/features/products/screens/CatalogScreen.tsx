@@ -14,8 +14,6 @@ import type { Product } from '../types';
 
 interface CatalogScreenProps {
   products: Product[];
-  isFavorite: (id: string) => boolean;
-  onToggleFavorite: (id: string) => void;
   favoritesCount: number;
   onAdjustQuantity: (id: string, delta: number) => void;
   onOpenProduct: (id: string) => void;
@@ -35,8 +33,6 @@ interface CatalogScreenProps {
 export default function CatalogScreen(props: CatalogScreenProps) {
   const {
     products,
-    isFavorite,
-    onToggleFavorite,
     favoritesCount,
     onAdjustQuantity,
     onOpenProduct,
@@ -50,13 +46,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
     useCatalog(products, favoritesCount);
-  const { renderItem } = useCatalogRenderItem({
-    columns,
-    isFavorite,
-    onToggleFavorite,
-    onAdjustQuantity,
-    onOpenProduct,
-  });
+  const { renderItem } = useCatalogRenderItem({ columns, onAdjustQuantity, onOpenProduct });
   // Safe areas latérales (paysage avec encoche) : filtres et liste s'en écartent.
   const sidePadding = {
     paddingLeft: theme.spacing.lg + insets.left,

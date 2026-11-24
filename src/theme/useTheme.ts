@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 
+import { useSettingsStore } from '@/shared/stores/settingsStore';
+
 import { darkColors, lightColors, type ColorTokens } from './colors';
 import { radius, spacing, typography } from './tokens';
 
@@ -13,17 +15,17 @@ export interface Theme {
 }
 
 /**
- * Renvoie le thème courant selon le réglage clair / sombre du téléphone.
+ * Renvoie le thème courant, selon le choix fait dans les Réglages :
+ * « Clair », « Sombre », ou « Système » qui suit le réglage du téléphone.
  *
  * ⚠️ Prérequis : `"userInterfaceStyle": "automatic"` dans app.json,
  * sinon useColorScheme() renvoie toujours "light".
- *
- * Au Module 7, on ajoutera un choix manuel (clair / sombre / système)
- * stocké dans Zustand.
  */
 export default function useTheme(): Theme {
-  const scheme = useColorScheme(); // 'light' | 'dark' | null | undefined
-  const isDark = scheme === 'dark';
+  const systemScheme = useColorScheme(); // 'light' | 'dark' | null | undefined
+  // Sélecteur : seul un changement de thème re-rend les composants, pas celui d'un interrupteur du scanner.
+  const themeMode = useSettingsStore((state) => state.themeMode);
+  const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode === 'dark';
 
   return useMemo(
     () => ({

@@ -24,8 +24,6 @@ export default function CatalogRoute() {
     isPullRefreshing,
     retry,
     isRetrying,
-    isFavorite,
-    toggleFavorite,
     favoritesCount,
     isLargeDataset,
     setIsLargeDataset,
@@ -47,8 +45,6 @@ export default function CatalogRoute() {
   return (
     <CatalogScreen
       products={products}
-      isFavorite={isFavorite}
-      onToggleFavorite={toggleFavorite}
       favoritesCount={favoritesCount}
       onAdjustQuantity={adjustQuantity}
       onOpenProduct={openProduct}

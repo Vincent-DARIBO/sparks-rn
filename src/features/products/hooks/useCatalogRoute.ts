@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import { getUserMessage } from '@/shared/errors/getUserMessage';
 
 import { generateProducts } from '../data/generateProducts';
+import { useFavoritesCount } from '../stores/favoritesStore';
 import useAdjustQuantity from './useAdjustQuantity';
-import useFavoritesContext from './useFavoritesContext';
 import useProducts from './useProducts';
 
 const LARGE_DATASET_SIZE = 5000;
@@ -20,7 +20,8 @@ const ignoreQuantityChange = () => {};
 // Logique de la route Catalogue. Module 7 : les produits viennent de l'API (TanStack Query).
 export default function useCatalogRoute() {
   const { products, isLoadingProducts, errorProducts, refetchProducts } = useProducts();
-  const { isFavorite, toggleFavorite, favoritesCount } = useFavoritesContext();
+  // Seul le NOMBRE de favoris est lu ici (sous-titre de l'en-tête) : chaque carte lit elle-même son étoile.
+  const favoritesCount = useFavoritesCount();
   const { adjustQuantity } = useAdjustQuantity();
   const [isLargeDataset, setIsLargeDataset] = useState(false);
   // Rechargement demandé par l'UTILISATEUR, et par quel geste : tirage de la liste ou bouton « Réessayer ».
@@ -56,8 +57,6 @@ export default function useCatalogRoute() {
     isPullRefreshing: userRefresh === 'pull',
     retry: () => void refreshProducts('retry'),
     isRetrying: userRefresh === 'retry',
-    isFavorite,
-    toggleFavorite,
     favoritesCount,
     isLargeDataset,
     setIsLargeDataset,

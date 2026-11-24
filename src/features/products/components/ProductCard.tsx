@@ -3,6 +3,7 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
+import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
 import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
 import { getStockStatus } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
@@ -10,9 +11,6 @@ import StockBadge from './StockBadge';
 
 interface ProductCardProps {
   product: Product;
-  isFavorite: boolean;
-  /** Callback remonté au parent : c'est lui qui possède l'état des favoris. */
-  onToggleFavorite: (id: string) => void;
   /** Boutons − / + : les données du stock appartiennent au parent. */
   onAdjustQuantity: (id: string, delta: number) => void;
   /** Appui sur la carte : ouvre la fiche produit. */
@@ -25,14 +23,18 @@ interface ProductCardProps {
  * - AUCUN état local, pas même un `useRef` : FlashList recycle les cellules,
  *   un état local suivrait la cellule et non le produit. La carte affiche
  *   `product.quantity` (données du serveur) et signale les changements au parent.
- * - Les FAVORIS sont un état du parent (App) : valeur en props, changement par callback.
- *   → Les données descendent, les événements remontent.
+ * - Les FAVORIS : la carte lit elle-même SON étoile dans le store Zustand (sélecteur
+ *   `useIsFavorite`). Parmi les cartes, seule celle dont l'étoile change se re-rend.
+ *   L'écran Catalogue, lui, se re-rend : le sous-titre « N produits en favori » change.
+ *   Mais FlashList ne redessine aucune cellule, car `data` et `renderItem` restent identiques.
  * - `memo` : la carte n'est rendue à nouveau que si ses props changent
  *   (avec React Compiler activé, ce `memo` deviendrait superflu).
  */
 export default memo(function ProductCard(props: ProductCardProps) {
-  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onPress } = props;
+  const { product, onAdjustQuantity, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const isFavorite = useIsFavorite(product.id);
+  const toggleFavorite = useToggleFavorite();
   const status = getStockStatus(product.quantity, product.minQuantity);
 
   return (
@@ -84,7 +86,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
       </View>
 
       <Pressable
-        onPress={() => onToggleFavorite(product.id)}
+        onPress={() => toggleFavorite(product.id)}
         hitSlop={12} // agrandit la zone tactile sans changer la taille visuelle
         accessibilityLabel={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
       >
