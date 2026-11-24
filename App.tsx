@@ -1,9 +1,11 @@
 /**
  * ÉTAPE 02 — TypeScript et React
  *
- * SCAN-01 : types métier (src/types), fonction pure de statut (src/utils)
- * et composants typés (src/components) pour afficher le catalogue.
- * SCAN-02 : hooks personnalisés (src/hooks) : useStock (état local d'une carte),
+ * SCAN-01 : types métier (src/features/products/types.ts), fonction pure
+ * de statut (src/features/products/utils)
+ * et composants typés (src/features/products/components) pour afficher le catalogue.
+ * SCAN-02 : hooks personnalisés (src/features/products/hooks,
+ * src/shared/hooks) : useStock (état local d'une carte),
  * useToggleSet (générique), useFavorites et useCatalog (useEffect).
  *
  * ÉTAPE 03 — Styles et mise en page
@@ -11,18 +13,24 @@
  * SCAN-03 : thème clair / sombre qui suit le réglage du téléphone (src/theme).
  * Couleurs, espacements et tailles de texte sont centralisés dans des jetons.
  * SCAN-04 : safe areas (react-native-safe-area-context) et écran d'accueil
- * responsive (src/screens) : tuiles de statistiques, 1 ou 2 colonnes.
- * SCAN-05 : fiche produit (src/screens). La « navigation » est ici un simple
+ * responsive (src/features/products/screens) : tuiles de statistiques, 1 ou 2 colonnes.
+ * SCAN-05 : fiche produit (src/features/products/screens). La « navigation » est ici un simple
  * état (useSelectedProduct) : on la remplacera par Expo Router au Module 5.
+ *
+ * ÉTAPE 04 — DÉPART (démonstration D3)
+ *
+ * Même application, réorganisée par fonctionnalité : src/features/products pour
+ * le produit, src/shared pour ce qui sert à plusieurs écrans, src/theme inchangé.
+ * L'alias `@/` (tsconfig.json) pointe sur src/ et évite les `../../..`.
  */
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { products } from './src/data/products';
-import useCatalog from './src/hooks/useCatalog';
-import useSelectedProduct from './src/hooks/useSelectedProduct';
-import HomeScreen from './src/screens/HomeScreen';
-import ProductDetailScreen from './src/screens/ProductDetailScreen';
+import { products } from '@/features/products/data/products';
+import useCatalog from '@/features/products/hooks/useCatalog';
+import useSelectedProduct from '@/features/products/hooks/useSelectedProduct';
+import CatalogScreen from '@/features/products/screens/CatalogScreen';
+import ProductDetailScreen from '@/features/products/screens/ProductDetailScreen';
 
 export default function App() {
   // L'état des favoris vit dans le parent commun à l'en-tête et aux cartes.
@@ -42,7 +50,7 @@ export default function App() {
           onBack={clearSelection}
         />
       ) : (
-        <HomeScreen
+        <CatalogScreen
           products={products}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}

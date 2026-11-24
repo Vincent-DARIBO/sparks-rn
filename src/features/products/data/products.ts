@@ -8,7 +8,7 @@
  * Module 2 : le tableau est maintenant typé. Essayez d'écrire
  * `category: 'fruits'` sur une ligne : TypeScript refuse immédiatement.
  */
-import type { Product } from '../types/product';
+import type { Product } from '../types';
 
 export const products: Product[] = [
   { id: '1', barcode: '3017620422003', name: 'Pâte à tartiner 400 g', brand: 'Nutella', category: 'petit-dejeuner', quantity: 24, minQuantity: 10 },

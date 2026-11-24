@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useThemedStyles, type Theme } from '../theme';
+import { useThemedStyles, type Theme } from '@/theme';
 
 /** Props typées : `subtitle` est optionnel grâce au `?`. */
 interface HeaderProps {

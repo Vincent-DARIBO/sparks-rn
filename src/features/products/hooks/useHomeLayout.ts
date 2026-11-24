@@ -1,7 +1,7 @@
 import { useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useTheme } from '../theme';
+import { useTheme } from '@/theme';
 
 /** Largeur à partir de laquelle on passe sur deux colonnes (tablette, paysage). */
 const TWO_COLUMNS_BREAKPOINT = 600;

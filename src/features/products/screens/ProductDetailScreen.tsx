@@ -1,12 +1,12 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Header from '../components/Header';
+import Header from '@/shared/components/Header';
 import InfoRow from '../components/InfoRow';
 import StockBadge from '../components/StockBadge';
 import useStock from '../hooks/useStock';
-import { useThemedStyles, type Theme } from '../theme';
-import { categoryLabels, type Product } from '../types/product';
+import { useThemedStyles, type Theme } from '@/theme';
+import { categoryLabels, type Product } from '../types';
 
 interface ProductDetailScreenProps {
   product: Product;
@@ -51,7 +51,7 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
         {/* Visuel : aspectRatio fixe la proportion, la largeur s'adapte à l'écran */}
         <View style={styles.hero}>
-          <Image source={require('../../assets/icon.png')} style={styles.heroImage} resizeMode="contain" />
+          <Image source={require('../../../../assets/icon.png')} style={styles.heroImage} resizeMode="contain" />
         </View>
 
         <View style={styles.section}>

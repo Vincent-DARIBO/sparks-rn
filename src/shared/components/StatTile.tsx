@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { useThemedStyles, type ColorTokens, type Theme } from '../theme';
+import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
 
 interface StatTileProps {
   label: string;

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { useThemedStyles, type ColorTokens, type Theme } from '../theme';
-import type { StockStatus } from '../types/product';
+import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
+import type { StockStatus } from '../types';
 
 interface StockBadgeProps {
   status: StockStatus;

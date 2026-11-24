@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Product } from '../types/product';
+import type { Product } from '../types';
 
 /**
  * Navigation minimale par état local : `null` = catalogue affiché,

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import type { StockStatus } from '../types/product';
+import type { StockStatus } from '../types';
 import { getStockStatus } from '../utils/stock';
 
 /** Ce que renvoie le hook : typer le retour documente l'API du hook. */

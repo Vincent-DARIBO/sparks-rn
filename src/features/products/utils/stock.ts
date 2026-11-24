@@ -1,4 +1,4 @@
-import type { StockStatus } from '../types/product';
+import type { StockStatus } from '../types';
 
 /**
  * Calcule l'état du stock. Fonction pure : mêmes entrées → même sortie,

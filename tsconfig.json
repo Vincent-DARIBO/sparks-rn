@@ -1,6 +1,11 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    // Alias d'import : `@/theme` au lieu de `../../../theme`.
+    // Expo (Metro) lit ces chemins directement : aucune configuration Babel nécessaire.
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

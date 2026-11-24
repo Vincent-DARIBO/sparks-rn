@@ -51,13 +51,23 @@ bun install
 | `etape-01-fondations` | Jeu de données, écran d'accueil, premiers pas avec React Native DevTools |
 | `etape-02-typescript-react` | Types, composants typés, hooks personnalisés (SCAN-01, SCAN-02) |
 | `etape-03-styles` | Thème clair/sombre, mise en page, zones sûres, fiche produit (SCAN-03 à SCAN-05) |
+| `etape-04-depart` | Départ du Jour 2 : organisation par fonctionnalité et alias `@/` |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
 ## Arborescence
 
 ```
-App.tsx            Point d'entrée de l'application
-src/data/          Données de démonstration
-src/hooks/         Hooks personnalisés
+App.tsx                  Point d'entrée de l'application
+src/features/products/   Tout ce qui concerne les produits
+  components/            Composants d'affichage (carte, badge, ligne d'information)
+  hooks/                 État et logique (stock, favoris, catalogue)
+  screens/               Écrans (catalogue, fiche produit)
+  data/                  Données de démonstration
+  utils/                 Fonctions pures (statut de stock)
+  types.ts               Types TypeScript
+src/shared/              Composants et hooks réutilisables partout
+src/theme/               Couleurs, espacements, typographie
 ```
+
+Les imports qui passent d'un dossier à l'autre utilisent l'alias `@/` (`@/theme`, `@/shared/components/Header`). À l'intérieur d'une fonctionnalité, on garde les chemins relatifs.

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { Product } from '../types/product';
+import type { Product } from '../types';
 import { getStockStatus } from '../utils/stock';
 
 /**
