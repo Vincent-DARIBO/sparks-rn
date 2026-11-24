@@ -18,7 +18,24 @@ export interface Product {
   quantity: number;
   /** Seuil d'alerte : en dessous ou à égalité, il faut réapprovisionner. */
   minQuantity: number;
+  /** Photo du produit : fichier copié dans le dossier de l'application (propre à CE téléphone). */
+  photoUri?: string;
+  /** Emplacement de stockage, enregistré avec la position du téléphone. */
+  location?: ProductLocation;
 }
+
+/** Position GPS et adresse lisible, enregistrées à un instant donné. */
+export interface ProductLocation {
+  latitude: number;
+  longitude: number;
+  /** Adresse lisible obtenue par géocodage inverse (ou coordonnées à défaut). */
+  label: string;
+  /** Date de l'enregistrement, au format ISO 8601 (ex. 2026-11-24T09:30:00.000Z). */
+  recordedAt: string;
+}
+
+/** Champs modifiables d'un produit, tous facultatifs : un PATCH n'envoie que ce qui change. */
+export type ProductPatch = Partial<Omit<Product, 'id'>>;
 
 /** Quantité maximale d'un produit : partagée par le schéma du formulaire et les boutons + . */
 export const MAX_QUANTITY = 9999;

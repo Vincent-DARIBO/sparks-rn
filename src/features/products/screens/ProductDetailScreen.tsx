@@ -5,11 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BackButton from '@/shared/components/BackButton';
 import Header from '@/shared/components/Header';
 import InfoRow from '../components/InfoRow';
-import ProductThumbnail from '../components/ProductThumbnail';
+import LocationRow from '../components/LocationRow';
+import ProductHero from '../components/ProductHero';
 import StockBadge from '../components/StockBadge';
 import useProductQuantity from '../hooks/useProductQuantity';
 import { useThemedStyles, type Theme } from '@/theme';
-import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
+import { categoryLabels, MAX_QUANTITY, type Product, type ProductLocation } from '../types';
 
 interface ProductDetailScreenProps {
   product: Product;
@@ -19,6 +20,11 @@ interface ProductDetailScreenProps {
   onBack: () => void;
   /** Élément affiché à droite de l'en-tête : la route y place le bouton « Modifier ». */
   headerRight?: ReactNode;
+  onChoosePhoto: () => void;
+  isSavingPhoto: boolean;
+  onRecordLocation: () => void;
+  onOpenLocation: (location: ProductLocation) => void;
+  isLocating: boolean;
 }
 
 /**
@@ -28,7 +34,19 @@ interface ProductDetailScreenProps {
  * la carte et la fiche affichent toujours la même valeur.
  */
 export default function ProductDetailScreen(props: ProductDetailScreenProps) {
-  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onBack, headerRight } = props;
+  const {
+    product,
+    isFavorite,
+    onToggleFavorite,
+    onAdjustQuantity,
+    onBack,
+    headerRight,
+    onChoosePhoto,
+    isSavingPhoto,
+    onRecordLocation,
+    onOpenLocation,
+    isLocating,
+  } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
   const { quantity, status, increment, decrement, reset } = useProductQuantity(product, onAdjustQuantity);
@@ -48,15 +66,18 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
       />
 
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
-        {/* Visuel : aspectRatio fixe la proportion, la largeur s'adapte à l'écran */}
-        <View style={styles.hero}>
-          <ProductThumbnail size={96} />
-        </View>
+        <ProductHero product={product} isSavingPhoto={isSavingPhoto} onChoosePhoto={onChoosePhoto} />
 
         <View style={styles.section}>
           <InfoRow label="Catégorie" value={categoryLabels[product.category]} />
           <InfoRow label="Code-barres" value={product.barcode} />
           <InfoRow label="Seuil d'alerte" value={`${product.minQuantity} unités`} />
+          <LocationRow
+            location={product.location}
+            isLocating={isLocating}
+            onRecordLocation={onRecordLocation}
+            onOpenLocation={onOpenLocation}
+          />
         </View>
 
         <View style={[styles.section, styles.stockSection]}>
@@ -104,14 +125,6 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
     content: { paddingVertical: spacing.lg, gap: spacing.lg },
-    hero: {
-      width: '100%',
-      aspectRatio: 16 / 9,
-      backgroundColor: colors.surfaceMuted,
-      borderRadius: radius.md,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     section: {
       backgroundColor: colors.surface,
       borderRadius: radius.md,

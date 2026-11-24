@@ -24,7 +24,7 @@ export default function ScannedProductCard(props: ScannedProductCardProps) {
     <View style={styles.card}>
       {props.kind === 'known' ? (
         <View style={styles.row}>
-          <ProductThumbnail size={48} />
+          <ProductThumbnail size={48} photoUri={props.product.photoUri} />
           <View style={styles.texts}>
             <Text style={styles.brand}>{props.product.brand}</Text>
             <Text style={styles.name} numberOfLines={1}>

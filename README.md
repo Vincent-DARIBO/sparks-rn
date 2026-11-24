@@ -70,6 +70,7 @@ bun install
 | `etape-06-formulaires` | Formulaires avec React Hook Form, validation Zod, gestion du clavier (SCAN-10, SCAN-11) |
 | `etape-07-depart` | Départ du Jour 3 : API REST simulée avec json-server |
 | `etape-07-donnees` | Données du serveur avec TanStack Query, écritures optimistes, favoris et réglages persistés avec Zustand (SCAN-12 à SCAN-14) |
+| `etape-08-natif` | Fonctionnalités natives : scanner de codes-barres, photo et emplacement d'un produit (SCAN-15, SCAN-16) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
