@@ -13,11 +13,12 @@ interface HomeScreenProps {
   isFavorite: (id: string) => boolean;
   onToggleFavorite: (id: string) => void;
   favoritesLabel: string;
+  onOpenProduct: (id: string) => void;
 }
 
 /** Écran d'accueil : tuiles de statistiques et grille responsive du catalogue. */
 export default function HomeScreen(props: HomeScreenProps) {
-  const { products, isFavorite, onToggleFavorite, favoritesLabel } = props;
+  const { products, isFavorite, onToggleFavorite, favoritesLabel, onOpenProduct } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const { insets, cardWidth } = useHomeLayout();
   const { totalCount, lowCount, outCount } = useStockStats(products);
@@ -55,6 +56,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               product={product}
               isFavorite={isFavorite(product.id)}
               onToggleFavorite={onToggleFavorite}
+              onPress={onOpenProduct}
               style={{ width: cardWidth }}
             />
           ))}
