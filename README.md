@@ -72,6 +72,7 @@ bun install
 | `etape-07-donnees` | Données du serveur avec TanStack Query, écritures optimistes, favoris et réglages persistés avec Zustand (SCAN-12 à SCAN-14) |
 | `etape-08-natif` | Fonctionnalités natives : scanner de codes-barres, photo et emplacement d'un produit (SCAN-15, SCAN-16) |
 | `etape-09-animations` | Animations avec Reanimated, suppression d'un produit par glissement (SCAN-17, SCAN-18) |
+| `etape-10-depart` | Départ du Jour 4 : le catalogue ralentit, à vous de trouver pourquoi |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 

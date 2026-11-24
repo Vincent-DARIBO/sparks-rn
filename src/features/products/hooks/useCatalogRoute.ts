@@ -11,20 +11,15 @@ import useProducts from './useProducts';
 
 const LARGE_DATASET_SIZE = 5000;
 
-// Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
-// Fonctions définies hors du hook : leur référence est stable, la liste mémoïsée
-// n'est donc pas redessinée à chaque rendu.
-const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
 const openNewProduct = () => router.push('/product/new');
 const ignoreQuantityChange = () => {};
 
 // Logique de la route Catalogue. Module 7 : les produits viennent de l'API (TanStack Query).
 export default function useCatalogRoute() {
   const { products, isLoadingProducts, errorProducts, refetchProducts } = useProducts();
-  // Seul le NOMBRE de favoris est lu ici (sous-titre de l'en-tête) : chaque carte lit elle-même son étoile.
+  // Seul le NOMBRE de favoris est lu ici (sous-titre de l'en-tête).
   const favoritesCount = useFavoritesCount();
   const { adjustQuantity } = useAdjustQuantity();
-  // `mutate` de TanStack Query est stable : il peut servir de dépendance à `renderItem` sans le recréer.
   const { deleteProduct } = useDeleteProduct();
   const [isLargeDataset, setIsLargeDataset] = useState(false);
   // Rechargement demandé par l'UTILISATEUR, et par quel geste : tirage de la liste ou bouton « Réessayer ».
@@ -46,6 +41,10 @@ export default function useCatalogRoute() {
     }
   };
 
+  // Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
+  const openProduct = (id: string) => router.push({ pathname: '/product/[id]', params: { id } });
+  const removeProduct = (id: string) => deleteProduct(id);
+
   // Démo de performances (Module 4) : ces produits n'existent pas sur le serveur, − et + n'y font rien.
   const largeDataset = useMemo(
     () => (isLargeDataset ? generateProducts(LARGE_DATASET_SIZE) : []),
@@ -66,7 +65,7 @@ export default function useCatalogRoute() {
     adjustQuantity: isLargeDataset ? ignoreQuantityChange : adjustQuantity,
     // Même raison que pour − / + : ces produits n'existent pas sur le serveur, et le geste est désactivé
     // (aucune ligne glissable : la liste de 5 000 produits ne coûte rien de plus qu'avant).
-    deleteProduct: isLargeDataset ? undefined : deleteProduct,
+    deleteProduct: isLargeDataset ? undefined : removeProduct,
     openProduct,
     addProduct: openNewProduct,
   };
