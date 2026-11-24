@@ -1,0 +1,16 @@
+# SCAN-25 : construit l'APK Android du profil « preview » (voir eas.json), à la demande seulement.
+# Pas de `push` ici : un build est long et consomme la file d'attente du plan gratuit.
+#
+# Lancement : bunx eas-cli workflow:run .eas/workflows/build-preview.yml
+name: APK preview
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build_android:
+    name: APK Android (distribution interne)
+    type: build
+    params:
+      platform: android
+      profile: preview

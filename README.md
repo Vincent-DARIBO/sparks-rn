@@ -91,6 +91,7 @@ bun install
 | `etape-09-animations` | Animations avec Reanimated, suppression d'un produit par glissement (SCAN-17, SCAN-18) |
 | `etape-10-depart` | Départ du Jour 4 : le catalogue ralentit, à vous de trouver pourquoi |
 | `etape-10-qualite` | Tests Jest du formulaire et du stock, scénario Maestro, catalogue redevenu fluide (SCAN-19 à SCAN-22) |
+| `etape-11-livraison` | Build installable avec EAS Build, mises à jour à distance avec EAS Update, vérification et publication avec EAS Workflows (SCAN-23 à SCAN-25) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 
