@@ -9,11 +9,13 @@ interface ProductFormHeaderProps {
   onCancel: () => void;
   /** Absent pendant le chargement du produit : seul « Annuler » est proposé. */
   onSubmit?: () => void;
+  /** Envoi en cours : « Enregistrer » est désactivé (et grisé) jusqu'à la réponse du serveur. */
+  isSubmitting?: boolean;
 }
 
 /** En-tête de la modale : Annuler — titre — Enregistrer. */
 export default function ProductFormHeader(props: ProductFormHeaderProps) {
-  const { title, onCancel, onSubmit } = props;
+  const { title, onCancel, onSubmit, isSubmitting = false } = props;
   const { styles } = useThemedStyles(createStyles);
 
   return (
@@ -35,8 +37,15 @@ export default function ProductFormHeader(props: ProductFormHeaderProps) {
       </Text>
       {/* Sans « Enregistrer », une zone vide de même largeur garde le titre centré. */}
       {onSubmit ? (
-        <Pressable onPress={onSubmit} hitSlop={12} style={[styles.side, styles.sideRight]} accessibilityRole="button">
-          <Text style={[styles.action, styles.actionStrong]}>Enregistrer</Text>
+        <Pressable
+          onPress={onSubmit}
+          disabled={isSubmitting}
+          hitSlop={12}
+          style={[styles.side, styles.sideRight]}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isSubmitting }}
+        >
+          <Text style={[styles.action, styles.actionStrong, isSubmitting && styles.actionDisabled]}>Enregistrer</Text>
         </Pressable>
       ) : (
         <View style={styles.side} />
@@ -61,5 +70,6 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
     sideRight: { alignItems: 'flex-end' },
     action: { ...typography.body, color: colors.primary },
     actionStrong: { fontWeight: '700' },
+    actionDisabled: { opacity: 0.4 },
     title: { ...typography.bodyStrong, flex: 1, textAlign: 'center', color: colors.text },
   });

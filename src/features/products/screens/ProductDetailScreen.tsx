@@ -9,7 +9,7 @@ import ProductThumbnail from '../components/ProductThumbnail';
 import StockBadge from '../components/StockBadge';
 import useProductQuantity from '../hooks/useProductQuantity';
 import { useThemedStyles, type Theme } from '@/theme';
-import { categoryLabels, type Product } from '../types';
+import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
 
 interface ProductDetailScreenProps {
   product: Product;
@@ -72,7 +72,12 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
               <Text style={styles.stepperLabel}>−</Text>
             </Pressable>
             <Text style={styles.quantity}>{quantity}</Text>
-            <Pressable style={styles.stepper} onPress={increment} accessibilityLabel="Ajouter une unité">
+            <Pressable
+              style={styles.stepper}
+              onPress={increment}
+              disabled={quantity >= MAX_QUANTITY}
+              accessibilityLabel="Ajouter une unité"
+            >
               <Text style={styles.stepperLabel}>+</Text>
             </Pressable>
           </View>

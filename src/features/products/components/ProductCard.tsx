@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
-import { categoryLabels, type Product } from '../types';
+import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
 import { getStockStatus } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
@@ -75,6 +75,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
           <Pressable
             style={styles.stepper}
             onPress={() => onAdjustQuantity(product.id, 1)}
+            disabled={product.quantity >= MAX_QUANTITY}
             accessibilityLabel="Ajouter une unité"
           >
             <Text style={styles.stepperLabel}>+</Text>

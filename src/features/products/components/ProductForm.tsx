@@ -12,8 +12,8 @@ interface ProductFormProps {
   /** « Nouveau produit » ou « Modifier le produit » : seul le titre change. */
   title: string;
   defaultValues: DefaultValues<ProductFormValues>;
-  /** Appelé seulement si TOUTES les règles du schéma sont respectées. */
-  onSubmit: (values: ProductFormValues) => void;
+  /** Appelé seulement si TOUTES les règles du schéma sont respectées ; attendu jusqu'à la réponse du serveur. */
+  onSubmit: (values: ProductFormValues) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -25,11 +25,11 @@ interface ProductFormProps {
 export default function ProductForm(props: ProductFormProps) {
   const { title, defaultValues, onSubmit, onCancel } = props;
   const { styles } = useThemedStyles(createStyles);
-  const { control, submit } = useProductForm({ defaultValues, onSubmit });
+  const { control, submit, isSubmitting } = useProductForm({ defaultValues, onSubmit });
 
   return (
     <View style={styles.screen}>
-      <ProductFormHeader title={title} onCancel={onCancel} onSubmit={submit} />
+      <ProductFormHeader title={title} onCancel={onCancel} onSubmit={submit} isSubmitting={isSubmitting} />
       <ProductFormFields control={control} />
     </View>
   );

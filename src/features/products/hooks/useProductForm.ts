@@ -9,8 +9,11 @@ interface UseProductFormParams {
    * la création s'ouvre sans catégorie, la modification s'ouvre préremplie.
    */
   defaultValues: DefaultValues<ProductFormValues>;
-  /** Appelé seulement si TOUTES les règles du schéma sont respectées. */
-  onSubmit: (values: ProductFormValues) => void;
+  /**
+   * Appelé seulement si TOUTES les règles du schéma sont respectées.
+   * Il renvoie une promesse : le formulaire reste « en cours d'envoi » jusqu'à la réponse du serveur.
+   */
+  onSubmit: (values: ProductFormValues) => Promise<void>;
 }
 
 /**
@@ -20,7 +23,11 @@ interface UseProductFormParams {
  */
 export default function useProductForm(params: UseProductFormParams) {
   const { defaultValues, onSubmit } = params;
-  const { control, handleSubmit } = useForm<ProductFormValues>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<ProductFormValues>({
     // Le résolveur branche le schéma Zod sur React Hook Form : à chaque validation,
     // RHF confie les valeurs à Zod et récupère ses messages d'erreur, champ par champ.
     resolver: zodResolver(productSchema),
@@ -44,5 +51,7 @@ export default function useProductForm(params: UseProductFormParams) {
   // handleSubmit valide d'abord tout le formulaire : `onSubmit` n'est appelé que s'il est valide.
   const submit = () => void handleSubmit(onSubmit)();
 
-  return { control, submit };
+  // isSubmitting : vrai de l'appui sur « Enregistrer » jusqu'à la fin de la promesse d'onSubmit
+  // (réponse du serveur). Le bouton est désactivé pendant ce temps : un double appui ne crée pas deux produits.
+  return { control, submit, isSubmitting };
 }

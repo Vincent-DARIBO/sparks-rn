@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { Category } from './types';
+import { MAX_QUANTITY, type Category } from './types';
 
 /**
  * Vérifie la clé de contrôle d'un code EAN-13 : le 13e chiffre complète la somme
@@ -39,7 +39,7 @@ export const productSchema = z.object({
     .number()
     .int()
     .min(0, { error: 'La quantité ne peut pas être négative.' })
-    .max(9999, { error: 'La quantité ne doit pas dépasser 9 999.' }),
+    .max(MAX_QUANTITY, { error: 'La quantité ne doit pas dépasser 9 999.' }),
   minQuantity: z.number().int().min(0).max(999, { error: 'Seuil trop élevé (999 maximum).' }),
 });
 
