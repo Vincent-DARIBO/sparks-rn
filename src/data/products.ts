@@ -5,9 +5,12 @@
  * Les codes-barres (EAN-13) sont ceux de vrais produits : ils serviront
  * au Jour 3 pour interroger l'API publique Open Food Facts.
  *
- * Au Module 2, vous créerez le type `Product` et typerez ce tableau.
+ * Module 2 : le tableau est maintenant typé. Essayez d'écrire
+ * `category: 'fruits'` sur une ligne : TypeScript refuse immédiatement.
  */
-export const products = [
+import type { Product } from '../types/product';
+
+export const products: Product[] = [
   { id: '1', barcode: '3017620422003', name: 'Pâte à tartiner 400 g', brand: 'Nutella', category: 'petit-dejeuner', quantity: 24, minQuantity: 10 },
   { id: '2', barcode: '5449000000996', name: 'Soda cola 33 cl', brand: 'Coca-Cola', category: 'boissons', quantity: 6, minQuantity: 12 },
   { id: '3', barcode: '3274080005003', name: 'Eau de source 1,5 L', brand: 'Cristaline', category: 'boissons', quantity: 48, minQuantity: 24 },
