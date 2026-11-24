@@ -6,8 +6,8 @@ import { getStockStatus } from '../utils/stock';
 /**
  * Totaux d'inventaire : produits, stock bas, ruptures.
  * Recalculés seulement quand la liste de produits change.
- * Limite volontaire : ils partent des données du catalogue, pas des quantités
- * modifiées sur les cartes (état local `useStock`). L'état partagé arrive au Jour 2.
+ * Ils portent sur tout l'inventaire partagé (`useInventory`), pas sur le
+ * résultat filtré : les tuiles suivent désormais les boutons − / +.
  */
 export default function useStockStats(products: Product[]) {
   return useMemo(() => {

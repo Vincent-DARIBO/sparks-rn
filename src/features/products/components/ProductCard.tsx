@@ -1,8 +1,10 @@
-import { Image, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import useStock from '../hooks/useStock';
+import useProductQuantity from '../hooks/useProductQuantity';
 import { useThemedStyles, type Theme } from '@/theme';
 import { categoryLabels, type Product } from '../types';
+import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
 
 interface ProductCardProps {
@@ -10,6 +12,8 @@ interface ProductCardProps {
   isFavorite: boolean;
   /** Callback remonté au parent : c'est lui qui possède l'état des favoris. */
   onToggleFavorite: (id: string) => void;
+  /** Boutons − / + : l'inventaire partagé (useInventory) appartient au parent. */
+  onAdjustQuantity: (id: string, delta: number) => void;
   /** Appui sur la carte : ouvre la fiche produit. */
   onPress: (id: string) => void;
   /** Style fourni par le parent : ici la largeur calculée par `useHomeLayout`. */
@@ -19,20 +23,17 @@ interface ProductCardProps {
 /**
  * Carte produit.
  *
- * - La QUANTITÉ est un état local à la carte (hook useStock) : aucun autre
- *   composant n'en a besoin pour l'instant.
- * - Les FAVORIS sont un état du parent (App) : il les compte dans l'en-tête.
- *   La carte reçoit la valeur en prop et signale les changements par callback.
+ * - La carte n'a plus AUCUN état local. La QUANTITÉ vient de l'inventaire
+ *   partagé (useInventory) : la fiche et les tuiles affichent la même valeur.
+ * - Les FAVORIS sont aussi un état du parent (App) : il les compte dans l'en-tête.
+ *   La carte reçoit les valeurs en props et signale les changements par callback.
  *   → Les données descendent, les événements remontent.
  * - Sa LARGEUR est imposée par le parent (prop `style`) : la grille décide.
  */
 export default function ProductCard(props: ProductCardProps) {
-  const { product, isFavorite, onToggleFavorite, onPress, style } = props;
-  const { styles } = useThemedStyles(createStyles);
-  const { quantity, status, increment, decrement } = useStock(
-    product.quantity,
-    product.minQuantity,
-  );
+  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onPress, style } = props;
+  const { theme, styles } = useThemedStyles(createStyles);
+  const { quantity, status, increment, decrement } = useProductQuantity(product, onAdjustQuantity);
 
   return (
     // Tableau de styles : le style de base, puis celui imposé par le parent.
@@ -51,8 +52,7 @@ export default function ProductCard(props: ProductCardProps) {
           accessibilityLabel={`Ouvrir la fiche de ${product.name}`}
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
-          {/* Image locale provisoire : require() est résolu au moment du build par Metro */}
-          <Image source={require('../../../../assets/icon.png')} style={styles.thumbnail} />
+          <ProductThumbnail size={THUMBNAIL_SIZE} />
 
           <View style={styles.body}>
             <Text style={styles.brand}>{product.brand}</Text>
@@ -84,7 +84,7 @@ export default function ProductCard(props: ProductCardProps) {
         hitSlop={12} // agrandit la zone tactile sans changer la taille visuelle
         accessibilityLabel={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
       >
-        <Text style={styles.favorite}>{isFavorite ? '★' : '☆'}</Text>
+        <Ionicons name={isFavorite ? 'star' : 'star-outline'} size={24} color={theme.colors.favorite} />
       </Pressable>
     </View>
   );
@@ -113,11 +113,6 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
     },
     infoPressed: {
       opacity: 0.7,
-    },
-    thumbnail: {
-      width: THUMBNAIL_SIZE,
-      height: THUMBNAIL_SIZE,
-      borderRadius: radius.sm,
     },
     body: {
       flex: 1, // prend toute la largeur restante à droite de l'image
@@ -153,9 +148,5 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
     stepperLabel: {
       ...typography.heading,
       color: colors.primary,
-    },
-    favorite: {
-      ...typography.heading,
-      color: colors.favorite,
     },
   });

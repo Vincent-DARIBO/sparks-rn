@@ -1,10 +1,11 @@
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Header from '@/shared/components/Header';
 import InfoRow from '../components/InfoRow';
+import ProductThumbnail from '../components/ProductThumbnail';
 import StockBadge from '../components/StockBadge';
-import useStock from '../hooks/useStock';
+import useProductQuantity from '../hooks/useProductQuantity';
 import { useThemedStyles, type Theme } from '@/theme';
 import { categoryLabels, type Product } from '../types';
 
@@ -12,24 +13,22 @@ interface ProductDetailScreenProps {
   product: Product;
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
+  onAdjustQuantity: (id: string, delta: number) => void;
   onBack: () => void;
 }
 
 /**
  * Fiche produit.
  *
- * ⚠️ Limite volontaire : la quantité est un état local (useStock). Une
- * modification faite ici n'apparaît pas sur la carte du catalogue, et
- * inversement. On résoudra ce problème d'état partagé au Module 7.
+ * La quantité vient de l'inventaire partagé (useInventory) : une modification
+ * faite ici se voit sur la carte du catalogue, et inversement.
+ * La limite acceptée au Jour 1 (état local useStock) est levée.
  */
 export default function ProductDetailScreen(props: ProductDetailScreenProps) {
-  const { product, isFavorite, onToggleFavorite, onBack } = props;
+  const { product, isFavorite, onToggleFavorite, onAdjustQuantity, onBack } = props;
   const { theme, styles } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
-  const { quantity, status, increment, decrement, reset } = useStock(
-    product.quantity,
-    product.minQuantity,
-  );
+  const { quantity, status, increment, decrement, reset } = useProductQuantity(product, onAdjustQuantity);
   // En paysage, l'encoche passe sur un côté : contenu et barre d'actions s'en écartent.
   const sidePadding = {
     paddingLeft: theme.spacing.lg + insets.left,
@@ -51,7 +50,7 @@ export default function ProductDetailScreen(props: ProductDetailScreenProps) {
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
         {/* Visuel : aspectRatio fixe la proportion, la largeur s'adapte à l'écran */}
         <View style={styles.hero}>
-          <Image source={require('../../../../assets/icon.png')} style={styles.heroImage} resizeMode="contain" />
+          <ProductThumbnail size={96} />
         </View>
 
         <View style={styles.section}>
@@ -106,7 +105,6 @@ const createStyles = ({ colors, spacing, radius, typography }: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    heroImage: { width: '40%', height: '70%' },
     section: {
       backgroundColor: colors.surface,
       borderRadius: radius.md,
