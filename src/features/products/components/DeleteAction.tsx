@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { type SharedValue } from 'react-native-reanimated';
 
@@ -16,6 +17,7 @@ interface DeleteActionProps {
 export default function DeleteAction(props: DeleteActionProps) {
   const { translation, productName, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const { containerStyle, iconStyle } = useDeleteActionStyle(translation);
 
   return (
@@ -23,12 +25,12 @@ export default function DeleteAction(props: DeleteActionProps) {
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
-        accessibilityLabel={`Supprimer ${productName}`}
+        accessibilityLabel={t('product.deleteNamed', { name: productName })}
         style={styles.action}
       >
         <Animated.View style={[styles.content, iconStyle]}>
           <Ionicons name="trash-outline" size={24} color={theme.colors.onStatus} />
-          <Text style={styles.label}>Supprimer</Text>
+          <Text style={styles.label}>{t('common.delete')}</Text>
         </Animated.View>
       </Pressable>
     </Animated.View>

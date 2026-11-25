@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,13 +9,25 @@ import SegmentedControl from '../components/SegmentedControl';
 import SettingsRow from '../components/SettingsRow';
 import SettingsSection from '../components/SettingsSection';
 import UpdateStatus from '../components/UpdateStatus';
-import useSettings, { themeOptions } from '../hooks/useSettings';
+import useSettings from '../hooks/useSettings';
 
-/** Écran Réglages de la maquette : Apparence, Scanner, Général. */
+/** Écran Réglages de la maquette : Apparence, Scanner, Langue, Général. */
 export default function SettingsScreen() {
   const { theme, styles } = useThemedStyles(createStyles);
-  const { themeMode, setThemeMode, vibrateOnScan, setVibrateOnScan, openAfterScan, setOpenAfterScan, versionLabel } =
-    useSettings();
+  const { t } = useTranslation();
+  const {
+    themeOptions,
+    themeMode,
+    setThemeMode,
+    languageOptions,
+    language,
+    setLanguage,
+    vibrateOnScan,
+    setVibrateOnScan,
+    openAfterScan,
+    setOpenAfterScan,
+    versionLabel,
+  } = useSettings();
   const insets = useSafeAreaInsets();
   // En paysage, l'encoche passe sur un côté : le contenu s'en écarte.
   const sidePadding = {
@@ -25,35 +37,43 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.screen}>
-      <Header title="Réglages" subtitle="Préférences de cet appareil" />
+      <Header title={t('settings.title')} subtitle={t('settings.subtitle')} />
       <ScrollView contentContainerStyle={[styles.content, sidePadding]}>
-        <SettingsSection title="Apparence" isCard={false}>
-          <SegmentedControl label="Thème" options={themeOptions} value={themeMode} onChange={setThemeMode} />
+        <SettingsSection title={t('settings.appearance')} isCard={false}>
+          <SegmentedControl
+            label={t('settings.theme')}
+            options={themeOptions}
+            value={themeMode}
+            onChange={setThemeMode}
+          />
         </SettingsSection>
 
-        <SettingsSection title="Scanner">
+        <SettingsSection title={t('settings.scanner')}>
           {/* `accessibilityLabel` : le lecteur d'écran annonce « Vibration au scan, interrupteur, activé ». */}
-          <SettingsRow label="Vibration au scan" hasSeparator>
-            <Switch value={vibrateOnScan} onValueChange={setVibrateOnScan} accessibilityLabel="Vibration au scan" />
+          <SettingsRow label={t('settings.vibrate')} hasSeparator>
+            <Switch value={vibrateOnScan} onValueChange={setVibrateOnScan} accessibilityLabel={t('settings.vibrate')} />
           </SettingsRow>
-          <SettingsRow label="Ouvrir la fiche après le scan">
+          <SettingsRow label={t('settings.openAfterScan')}>
             <Switch
               value={openAfterScan}
               onValueChange={setOpenAfterScan}
-              accessibilityLabel="Ouvrir la fiche après le scan"
+              accessibilityLabel={t('settings.openAfterScan')}
             />
           </SettingsRow>
         </SettingsSection>
 
-        <SettingsSection title="Général">
-          {/* Une seule langue pour l'instant : la ligne n'est pas encore un bouton. */}
-          <SettingsRow label="Langue" hasSeparator>
-            <View style={styles.value}>
-              <Text style={styles.valueText}>Français</Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textMuted} />
-            </View>
-          </SettingsRow>
-          <SettingsRow label="Version" hasSeparator>
+        {/* « Système » suit la langue du téléphone ; le choix est enregistré et s'applique tout de suite. */}
+        <SettingsSection title={t('settings.language')} isCard={false}>
+          <SegmentedControl
+            label={t('settings.language')}
+            options={languageOptions}
+            value={language}
+            onChange={setLanguage}
+          />
+        </SettingsSection>
+
+        <SettingsSection title={t('settings.general')}>
+          <SettingsRow label={t('settings.version')} hasSeparator>
             <Text style={styles.valueText}>{versionLabel}</Text>
           </SettingsRow>
           <UpdateStatus />
@@ -67,6 +87,5 @@ const createStyles = ({ colors, spacing, typography }: Theme) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
     content: { padding: spacing.lg, gap: spacing.xl },
-    value: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
     valueText: { ...typography.body, color: colors.textMuted },
   });

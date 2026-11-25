@@ -1,7 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Switch, Text, View } from 'react-native';
 
+import useFormatters from '@/i18n/useFormatters';
 import StatTile from '@/shared/components/StatTile';
 import { useThemedStyles, type Theme } from '@/theme';
+
+import { LARGE_DATASET_SIZE } from '../types';
 
 interface CatalogListHeaderProps {
   stats: { total: number; low: number; out: number };
@@ -13,22 +17,25 @@ interface CatalogListHeaderProps {
 export default function CatalogListHeader(props: CatalogListHeaderProps) {
   const { stats, isLargeDataset, onToggleLargeDataset } = props;
   const { styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
+  // Nombres au format de la langue : « 5 000 » en français, « 5,000 » en anglais.
+  const format = useFormatters();
 
   return (
     <View style={styles.listHeader}>
       <View style={styles.statsRow}>
-        <StatTile label="Produits" value={stats.total} />
-        <StatTile label="Stock bas" value={stats.low} tone="warning" />
-        <StatTile label="Ruptures" value={stats.out} tone="danger" />
+        <StatTile label={t('catalog.statProducts')} value={format.number(stats.total)} />
+        <StatTile label={t('catalog.statLow')} value={format.number(stats.low)} tone="warning" />
+        <StatTile label={t('catalog.statOut')} value={format.number(stats.out)} tone="danger" />
       </View>
       {/* Réservé au développement : __DEV__ vaut false dans un build de production. */}
       {__DEV__ ? (
         <View style={styles.devRow}>
-          <Text style={styles.devLabel}>Démo perfs : 5 000 produits</Text>
+          <Text style={styles.devLabel}>{t('catalog.perfDemo', { total: format.number(LARGE_DATASET_SIZE) })}</Text>
           <Switch value={isLargeDataset} onValueChange={onToggleLargeDataset} />
         </View>
       ) : null}
-      <Text style={styles.sectionTitle}>Catalogue</Text>
+      <Text style={styles.sectionTitle}>{t('catalog.title')}</Text>
     </View>
   );
 }

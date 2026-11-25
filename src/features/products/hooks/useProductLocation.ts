@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Linking } from 'react-native';
 
 import { ProductLocationService } from '../services/ProductLocationService';
@@ -9,7 +10,8 @@ import useUpdateProduct from './useUpdateProduct';
 // Emplacement de stockage du produit : enregistré avec la position actuelle, affiché sur une carte.
 export default function useProductLocation(productId: string) {
   const { updateProduct } = useUpdateProduct(productId);
-  const { handleMediaError } = useMediaErrorHandler('Emplacement du produit');
+  const { t } = useTranslation();
+  const { handleMediaError } = useMediaErrorHandler(t('product.locationTitle'), 'location');
   const [isLocating, setIsLocating] = useState(false);
 
   const recordCurrentLocation = async () => {
@@ -28,7 +30,7 @@ export default function useProductLocation(productId: string) {
   // le navigateur sinon, sur Android comme sur iOS. Pas besoin de clé d'API.
   const openLocation = ({ latitude, longitude }: ProductLocation) => {
     Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`).catch(() =>
-      Alert.alert('Emplacement du produit', "Impossible d'ouvrir la carte."),
+      Alert.alert(t('product.locationTitle'), t('product.mapOpenFailed')),
     );
   };
 

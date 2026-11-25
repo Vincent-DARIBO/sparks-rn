@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -16,24 +17,25 @@ interface LocationRowProps {
 export default function LocationRow(props: LocationRowProps) {
   const { location, isLocating, onRecordLocation, onOpenLocation } = props;
   const { theme, styles } = useThemedStyles(createStyles);
-  const buttonLabel = location ? 'Mettre à jour avec ma position' : "Enregistrer l'emplacement ici";
+  const { t } = useTranslation();
+  const buttonLabel = location ? t('product.locationUpdate') : t('product.locationRecord');
 
   return (
     <>
       <View style={styles.row}>
-        <Text style={styles.label}>Emplacement</Text>
+        <Text style={styles.label}>{t('product.location')}</Text>
         {location ? (
           <Pressable
             onPress={() => onOpenLocation(location)}
             accessibilityRole="link"
-            accessibilityHint="Affiche cet emplacement dans Google Maps"
+            accessibilityHint={t('product.locationOpenHint')}
             hitSlop={12} // zone tactile d'au moins 44 pt sans agrandir le texte
             style={styles.address}
           >
             <Text style={[styles.value, styles.link]}>{location.label}</Text>
           </Pressable>
         ) : (
-          <Text style={[styles.value, styles.muted]}>Non renseigné</Text>
+          <Text style={[styles.value, styles.muted]}>{t('product.locationUnknown')}</Text>
         )}
       </View>
       <Pressable

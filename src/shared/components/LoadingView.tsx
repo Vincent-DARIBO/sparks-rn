@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -12,12 +13,13 @@ interface LoadingViewProps {
 export default function LoadingView(props: LoadingViewProps) {
   const { header } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
 
   return (
     <View style={styles.screen}>
       {header}
       <View style={styles.body}>
-        <ActivityIndicator size="large" color={theme.colors.primary} accessibilityLabel="Chargement en cours" />
+        <ActivityIndicator size="large" color={theme.colors.primary} accessibilityLabel={t('common.loading')} />
       </View>
     </View>
   );

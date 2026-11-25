@@ -92,6 +92,7 @@ bun install
 | `etape-10-depart` | Départ du Jour 4 : le catalogue ralentit, à vous de trouver pourquoi |
 | `etape-10-qualite` | Tests Jest du formulaire et du stock, scénario Maestro, catalogue redevenu fluide (SCAN-19 à SCAN-22) |
 | `etape-11-livraison` | Build installable avec EAS Build, mises à jour à distance avec EAS Update, vérification et publication avec EAS Workflows (SCAN-23 à SCAN-25) |
+| `etape-12-i18n` | Module à la carte : application en français et en anglais avec i18next, langue du téléphone ou choisie dans les Réglages (SCAN-27) |
 
 Les branches suivantes seront ajoutées au fil de la formation.
 

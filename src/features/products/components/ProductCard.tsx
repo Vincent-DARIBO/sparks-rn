@@ -1,10 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
 import { useIsFavorite, useToggleFavorite } from '../stores/favoritesStore';
-import { categoryLabels, MAX_QUANTITY, type Product } from '../types';
+import { MAX_QUANTITY, type Product } from '../types';
 import { getStockStatus, getStockText } from '../utils/stock';
 import ProductThumbnail from './ProductThumbnail';
 import StockBadge from './StockBadge';
@@ -40,6 +41,7 @@ interface ProductCardProps {
 export default memo(function ProductCard(props: ProductCardProps) {
   const { product, onAdjustQuantity, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const isFavorite = useIsFavorite(product.id);
   const toggleFavorite = useToggleFavorite();
   const status = getStockStatus(product.quantity, product.minQuantity);
@@ -57,7 +59,10 @@ export default memo(function ProductCard(props: ProductCardProps) {
         <Pressable
           onPress={() => onPress(product.id)}
           accessibilityRole="button"
-          accessibilityLabel={`Ouvrir la fiche de ${product.name}, ${getStockText(status, product.quantity)}`}
+          accessibilityLabel={t('product.open', {
+            name: product.name,
+            stock: getStockText(status, product.quantity, t),
+          })}
           style={({ pressed }) => [styles.info, pressed && styles.infoPressed]}
         >
           <ProductThumbnail size={THUMBNAIL_SIZE} photoUri={product.photoUri} />
@@ -67,7 +72,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
             <Text style={styles.name} numberOfLines={2}>
               {product.name}
             </Text>
-            <Text style={styles.category}>{categoryLabels[product.category]}</Text>
+            <Text style={styles.category}>{t(`categories.${product.category}`)}</Text>
             <StockBadge status={status} quantity={product.quantity} productId={product.id} />
           </View>
         </Pressable>
@@ -77,7 +82,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
             style={styles.stepper}
             onPress={() => onAdjustQuantity(product.id, -1)}
             disabled={product.quantity === 0}
-            accessibilityLabel="Retirer une unité"
+            accessibilityLabel={t('product.removeUnit')}
           >
             <Text style={styles.stepperLabel}>−</Text>
           </Pressable>
@@ -85,7 +90,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
             style={styles.stepper}
             onPress={() => onAdjustQuantity(product.id, 1)}
             disabled={product.quantity >= MAX_QUANTITY}
-            accessibilityLabel="Ajouter une unité"
+            accessibilityLabel={t('product.addUnit')}
           >
             <Text style={styles.stepperLabel}>+</Text>
           </Pressable>
@@ -95,7 +100,7 @@ export default memo(function ProductCard(props: ProductCardProps) {
       <Pressable
         onPress={() => toggleFavorite(product.id)}
         hitSlop={12} // agrandit la zone tactile sans changer la taille visuelle
-        accessibilityLabel={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        accessibilityLabel={isFavorite ? t('product.removeFavorite') : t('product.addFavorite')}
       >
         <Ionicons name={isFavorite ? 'star' : 'star-outline'} size={24} color={theme.colors.favorite} />
       </Pressable>

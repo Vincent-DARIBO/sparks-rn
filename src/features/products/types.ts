@@ -4,7 +4,7 @@
  * Union de chaînes littérales plutôt qu'un `enum` : plus léger, aucun code
  * généré à l'exécution, et l'autocomplétion fonctionne pareil.
  */
-export type Category = 'boissons' | 'epicerie' | 'biscuits' | 'petit-dejeuner';
+export type Category = (typeof categories)[number];
 
 /** Un produit de l'inventaire. */
 export interface Product {
@@ -43,10 +43,11 @@ export const MAX_QUANTITY = 9999;
 /** État du stock d'un produit, calculé à partir de la quantité et du seuil. */
 export type StockStatus = 'out' | 'low' | 'ok';
 
-/** Libellés affichables, indexés par catégorie. `Record` garantit l'exhaustivité. */
-export const categoryLabels: Record<Category, string> = {
-  boissons: 'Boissons',
-  epicerie: 'Épicerie',
-  biscuits: 'Biscuits',
-  'petit-dejeuner': 'Petit-déjeuner',
-};
+/**
+ * Les catégories, dans l'ordre d'affichage. Leurs libellés sont traduits : `t(`categories.${category}`)`.
+ * Une catégorie sans traduction est une erreur TypeScript (voir `src/i18n/locales/fr.ts`).
+ */
+export const categories = ['boissons', 'epicerie', 'biscuits', 'petit-dejeuner'] as const;
+
+/** Taille du grand catalogue de la « Démo perfs » (activée depuis le Catalogue). */
+export const LARGE_DATASET_SIZE = 5000;

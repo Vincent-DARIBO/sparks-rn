@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -13,13 +14,14 @@ interface PhotoButtonProps {
 export default function PhotoButton(props: PhotoButtonProps) {
   const { hasPhoto, isSaving, onPress } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isSaving}
       accessibilityRole="button"
-      accessibilityLabel={hasPhoto ? 'Changer la photo' : 'Ajouter une photo'}
+      accessibilityLabel={hasPhoto ? t('product.changePhoto') : t('product.addPhoto')}
       accessibilityState={{ busy: isSaving, disabled: isSaving }}
       style={styles.button}
     >

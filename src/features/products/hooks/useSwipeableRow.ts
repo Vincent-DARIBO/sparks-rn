@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 import type { Product } from '../types';
@@ -7,6 +8,7 @@ import { confirmDeleteProduct } from '../utils/confirmDeleteProduct';
 // Donne accès à la ligne glissable, la referme au recyclage et gère « Supprimer » (fermer puis confirmer).
 export default function useSwipeableRow(product: Product, onDelete: (id: string) => void) {
   const swipeableRef = useRef<SwipeableMethods>(null);
+  const { t } = useTranslation();
 
   // FlashList RECYCLE les cellules : la même ligne glissable sert successivement à plusieurs produits,
   // avec son état d'ouverture. Une carte laissée ouverte réapparaîtrait donc ouverte sur un AUTRE produit.
@@ -20,7 +22,7 @@ export default function useSwipeableRow(product: Product, onDelete: (id: string)
   // On referme la carte AVANT la confirmation : « Annuler » la laisse donc fermée.
   const closeAndDelete = () => {
     swipeableRef.current?.close();
-    confirmDeleteProduct(product, onDelete);
+    confirmDeleteProduct(product, onDelete, t);
   };
 
   return { swipeableRef, closeAndDelete };

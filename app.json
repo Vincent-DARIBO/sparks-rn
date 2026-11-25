@@ -63,7 +63,8 @@
           "locationFullAccuracyPermission": false,
           "motionUsagePermission": false
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "scheme": "scanstock"
   }
