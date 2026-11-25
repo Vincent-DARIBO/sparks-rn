@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import ProductEditLink from '@/features/products/components/ProductEditLink';
 import useProductDetailRoute from '@/features/products/hooks/useProductDetailRoute';
 import ProductDetailScreen from '@/features/products/screens/ProductDetailScreen';
@@ -30,15 +32,16 @@ export default function ProductRoute() {
     isLocating,
     goBack,
   } = useProductDetailRoute();
+  const { t } = useTranslation();
 
   // Un lien profond peut contenir n'importe quel identifiant : l'API répond 404.
   if (isProductNotFound) {
-    return <NotFoundScreen title="Produit introuvable" message={`Aucun produit avec l'identifiant « ${id} ».`} />;
+    return <NotFoundScreen title={t('product.notFoundTitle')} message={t('product.notFound', { id })} />;
   }
   // Des données déjà connues (cache) s'affichent, même si leur mise à jour a échoué.
   if (!product) {
     // L'en-tête et son bouton retour restent disponibles pendant le chargement et en cas d'erreur.
-    const header = <Header title="Fiche produit" left={<BackButton onPress={goBack} />} />;
+    const header = <Header title={t('product.detailTitle')} left={<BackButton onPress={goBack} />} />;
     return errorMessage ? (
       <ErrorView
         header={header}

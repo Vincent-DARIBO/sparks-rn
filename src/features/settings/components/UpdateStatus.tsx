@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -8,11 +9,12 @@ import SettingsRow from './SettingsRow';
 /** Ligne « Mise à jour » et, sous elle, le bouton qui recherche, télécharge ou applique une mise à jour. */
 export default function UpdateStatus() {
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const { isUpdatesEnabled, statusLabel, actionLabel, isBusy, runAction } = useUpdateStatus();
 
   return (
     <>
-      <SettingsRow label="Mise à jour" hasSeparator={isUpdatesEnabled}>
+      <SettingsRow label={t('settings.update')} hasSeparator={isUpdatesEnabled}>
         <Text style={styles.valueText}>{statusLabel}</Text>
       </SettingsRow>
       {isUpdatesEnabled ? (

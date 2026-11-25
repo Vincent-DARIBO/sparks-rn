@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 import type { StockStatus } from '../types';
 
 /**
@@ -10,13 +12,10 @@ export function getStockStatus(quantity: number, minQuantity: number): StockStat
   return 'ok';
 }
 
-const stockStatusLabels: Record<StockStatus, string> = {
-  out: 'Rupture',
-  low: 'Stock bas',
-  ok: 'En stock',
-};
-
-/** Texte du badge de stock, par exemple « En stock · 25 ». */
-export function getStockText(status: StockStatus, quantity: number): string {
-  return `${stockStatusLabels[status]} · ${quantity}`;
+/**
+ * Texte du badge de stock, par exemple « En stock · 25 » (« In stock · 25 » en anglais).
+ * Un composant passe SON `t` (issu de `useTranslation`) : il se re-rend alors au changement de langue.
+ */
+export function getStockText(status: StockStatus, quantity: number, t: TFunction): string {
+  return t('stock.badge', { label: t(`stock.${status}`), quantity });
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -18,6 +19,7 @@ interface ErrorViewProps {
 export default function ErrorView(props: ErrorViewProps) {
   const { message, onRetry, isRetrying = false, compact = false, header } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
 
   const content = (
     <View style={compact ? styles.banner : styles.body}>
@@ -45,7 +47,7 @@ export default function ErrorView(props: ErrorViewProps) {
         ]}
       >
         {isRetrying ? <ActivityIndicator size="small" color={theme.colors.onPrimary} /> : null}
-        <Text style={styles.buttonLabel}>Réessayer</Text>
+        <Text style={styles.buttonLabel}>{t('common.retry')}</Text>
       </Pressable>
     </View>
   );

@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ReactNode } from 'react';
 import { FlashList } from '@shopify/flash-list';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import Header from '@/shared/components/Header';
@@ -47,6 +48,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
     errorBanner,
   } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const { insets, columns, stats, favoritesLabel, query, setQuery, category, setCategory, filtered } =
     useCatalog(products, favoritesCount);
   const { renderItem } = useCatalogRenderItem({
@@ -71,7 +73,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         subtitle={favoritesLabel}
         right={
           // Icône de 28 + hitSlop de 8 de chaque côté = 44 pt, la taille minimale recommandée.
-          <Pressable onPress={onAddProduct} hitSlop={8} accessibilityRole="button" accessibilityLabel="Ajouter un produit">
+          <Pressable onPress={onAddProduct} hitSlop={8} accessibilityRole="button" accessibilityLabel={t('catalog.add')}>
             <Ionicons name="add" size={28} color={theme.colors.onHeader} />
           </Pressable>
         }
@@ -106,7 +108,7 @@ export default function CatalogScreen(props: CatalogScreenProps) {
         }
         // L'en-tête n'est pas une cellule : il récupère la demi-marge retirée ci-dessous.
         ListHeaderComponentStyle={{ paddingHorizontal: cellSideOffset }}
-        ListEmptyComponent={<Text style={styles.empty}>Aucun produit ne correspond à votre recherche.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{t('catalog.empty')}</Text>}
         contentContainerStyle={{
           paddingLeft: sidePadding.paddingLeft - cellSideOffset,
           paddingRight: sidePadding.paddingRight - cellSideOffset,

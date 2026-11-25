@@ -17,6 +17,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
+import useSyncLanguage from '@/i18n/useSyncLanguage';
 import { queryClient } from '@/shared/api/queryClient';
 import { syncNativeColorScheme, useTheme } from '@/theme';
 
@@ -29,6 +30,8 @@ syncNativeColorScheme();
 
 export default function RootLayout() {
   const { colors } = useTheme();
+  // Applique la langue choisie dans les Réglages (ou celle du téléphone) à toute l'application.
+  useSyncLanguage();
 
   return (
     // Gesture Handler ne reconnaît les gestes (glisser pour supprimer) qu'à l'intérieur de cette vue :

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -10,9 +11,10 @@ interface BackButtonProps {
 export default function BackButton(props: BackButtonProps) {
   const { onPress } = props;
   const { styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
 
   return (
-    <Pressable onPress={onPress} hitSlop={12} accessibilityLabel="Retour au catalogue">
+    <Pressable onPress={onPress} hitSlop={12} accessibilityLabel={t('common.backToCatalog')}>
       <Text style={styles.back}>‹</Text>
     </Pressable>
   );

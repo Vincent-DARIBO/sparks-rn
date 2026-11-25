@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { MAX_QUANTITY, type Category } from './types';
+import { categories, MAX_QUANTITY, type Category } from './types';
 
 /**
  * Vérifie la clé de contrôle d'un code EAN-13 : le 13e chiffre complète la somme
@@ -15,8 +15,6 @@ export function isValidEan13(code: string): boolean {
     .reduce((acc, digit, index) => acc + digit * (index % 2 === 0 ? 1 : 3), 0);
   return (10 - (sum % 10)) % 10 === digits[12];
 }
-
-const CATEGORIES = ['boissons', 'epicerie', 'biscuits', 'petit-dejeuner'] as const;
 
 /**
  * Schéma de validation du formulaire produit, commun à la création et à la modification.
@@ -34,7 +32,7 @@ export const productSchema = z.object({
     .trim()
     .regex(/^\d{13}$/, { error: 'Le code-barres doit contenir 13 chiffres.' })
     .refine(isValidEan13, { error: "Ce code-barres n'est pas un EAN-13 valide (clé de contrôle)." }),
-  category: z.enum(CATEGORIES, { error: 'Choisissez une catégorie.' }),
+  category: z.enum(categories, { error: 'Choisissez une catégorie.' }),
   quantity: z
     .number()
     .int()

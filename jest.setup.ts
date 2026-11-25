@@ -33,3 +33,10 @@ jest.mock('@/shared/services/StorageService', () => {
     },
   };
 });
+
+// i18next est initialisé à l'import de `@/i18n`, dans la langue de la machine : on le force en français,
+// la langue de référence, pour que les tests retrouvent les textes français.
+// Avant CHAQUE test : un test qui change la langue ne contamine pas les suivants.
+beforeEach(async () => {
+  await require('@/i18n').default.changeLanguage('fr');
+});

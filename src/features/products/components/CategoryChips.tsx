@@ -1,8 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
 
-import { categoryLabels, type Category } from '../types';
+import { categories, type Category } from '../types';
 
 interface CategoryChipsProps {
   value: Category | null;
@@ -13,29 +14,24 @@ interface CategoryChipsProps {
   layout?: 'scroll' | 'wrap';
 }
 
-/** `Object.keys` renvoie `string[]` : on reprécise le type des clés. */
-const categories = Object.keys(categoryLabels) as Category[];
-
-/** Une pastille par catégorie, calculées une seule fois. */
-const categoryOptions: { key: Category | null; label: string }[] = categories.map((c) => ({
-  key: c,
-  label: categoryLabels[c],
-}));
-
-/** « Tous » (`null`) en tête, pour les filtres du catalogue. */
-const optionsWithAll = [{ key: null, label: 'Tous' }, ...categoryOptions];
-
 /** Pastilles de catégorie : filtres du catalogue et choix dans le formulaire. */
 export default function CategoryChips(props: CategoryChipsProps) {
   const { value, onChange, includeAll = true, layout = 'scroll' } = props;
   const { styles } = useThemedStyles(createStyles);
-  const options = includeAll ? optionsWithAll : categoryOptions;
+  const { t } = useTranslation();
+
+  // Une pastille par catégorie, libellés dans la langue active ; « Tous » (`null`) en tête pour les filtres.
+  const categoryOptions: { key: Category | null; label: string }[] = categories.map((category) => ({
+    key: category,
+    label: t(`categories.${category}`),
+  }));
+  const options = includeAll ? [{ key: null, label: t('categories.all') }, ...categoryOptions] : categoryOptions;
 
   const chips = options.map((option) => {
     const selected = option.key === value;
     return (
       <Pressable
-        key={option.label}
+        key={option.key ?? 'all'}
         onPress={() => onChange(option.key)}
         accessibilityRole="button"
         accessibilityState={{ selected }}

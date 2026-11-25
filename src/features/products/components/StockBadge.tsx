@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text } from 'react-native';
 import Animated from 'react-native-reanimated';
 
@@ -29,6 +30,7 @@ const badgeColors: Record<StockStatus, keyof ColorTokens> = {
 export default function StockBadge(props: StockBadgeProps) {
   const { status, quantity, productId } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const color = badgeColors[status];
   // Le badge « pulse » quand la quantité de CE produit change.
   const popStyle = usePopOnChange(quantity, productId);
@@ -37,7 +39,7 @@ export default function StockBadge(props: StockBadgeProps) {
     // Tableau de styles : le style statique, puis la partie dynamique, puis le style animé.
     // `Animated.View` : une View dont le style peut être piloté depuis le thread UI.
     <Animated.View style={[styles.badge, { backgroundColor: theme.colors[color] }, popStyle]}>
-      <Text style={styles.label}>{getStockText(status, quantity)}</Text>
+      <Text style={styles.label}>{getStockText(status, quantity, t)}</Text>
     </Animated.View>
   );
 }

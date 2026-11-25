@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -17,6 +18,7 @@ interface ProductHeroProps {
 export default function ProductHero(props: ProductHeroProps) {
   const { product, isSavingPhoto, onChoosePhoto } = props;
   const { styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
   const { showPhoto, handlePhotoError } = usePhotoFallback(product.photoUri);
 
   return (
@@ -29,7 +31,7 @@ export default function ProductHero(props: ProductHeroProps) {
           onError={handlePhotoError}
           style={StyleSheet.absoluteFill}
           resizeMode="cover"
-          accessibilityLabel={`Photo de ${product.name}`}
+          accessibilityLabel={t('product.photoOf', { name: product.name })}
           accessibilityIgnoresInvertColors
         />
       ) : (

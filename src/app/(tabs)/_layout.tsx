@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import TabIcon from '@/shared/components/TabIcon';
 import { useTheme } from '@/theme';
@@ -9,6 +10,8 @@ import { useTheme } from '@/theme';
  */
 export default function TabsLayout() {
   const { colors } = useTheme();
+  // Les titres des onglets changent avec la langue.
+  const { t } = useTranslation();
 
   return (
     <Tabs
@@ -23,21 +26,21 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Catalogue',
+          title: t('tabs.catalog'),
           tabBarIcon: ({ focused, size }) => <TabIcon name="list" size={size} focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="scanner"
         options={{
-          title: 'Scanner',
+          title: t('tabs.scanner'),
           tabBarIcon: ({ focused, size }) => <TabIcon name="barcode-outline" size={size} focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Réglages',
+          title: t('tabs.settings'),
           tabBarIcon: ({ focused, size }) => <TabIcon name="settings-outline" size={size} focused={focused} />,
         }}
       />

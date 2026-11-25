@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,6 +15,7 @@ const TWO_COLUMNS_BREAKPOINT = 600;
  * statistiques, filtres et libellé des favoris.
  */
 export default function useCatalog(products: Product[], favoritesCount: number) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   // useWindowDimensions se met à jour à la rotation de l'écran
   // (contrairement à Dimensions.get, lu une seule fois).
@@ -34,8 +36,8 @@ export default function useCatalog(products: Product[], favoritesCount: number) 
     return { total: products.length, low, out };
   }, [products]);
 
-  // Accord en français : « 0 produit », « 1 produit », « 2 produits ».
-  const favoritesLabel = `${favoritesCount} ${favoritesCount > 1 ? 'produits' : 'produit'} en favori`;
+  // Pluriel selon la langue : « 0 produit en favori », « 2 produits en favori » / « 0 favorite products ».
+  const favoritesLabel = t('catalog.favorites', { count: favoritesCount });
 
   return { insets, columns, stats, favoritesLabel, ...filters };
 }

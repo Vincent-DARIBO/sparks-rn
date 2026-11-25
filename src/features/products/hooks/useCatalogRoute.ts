@@ -5,11 +5,10 @@ import { getUserMessage } from '@/shared/errors/getUserMessage';
 
 import { generateProducts } from '../data/generateProducts';
 import { useFavoritesCount } from '../stores/favoritesStore';
+import { LARGE_DATASET_SIZE } from '../types';
 import useAdjustQuantity from './useAdjustQuantity';
 import useDeleteProduct from './useDeleteProduct';
 import useProducts from './useProducts';
-
-const LARGE_DATASET_SIZE = 5000;
 
 // Route dynamique : `/product/1`, `/product/2`… (fichier product/[id]/index.tsx).
 // Fonctions définies HORS du hook : elles ne dépendent de rien du rendu, leur référence ne

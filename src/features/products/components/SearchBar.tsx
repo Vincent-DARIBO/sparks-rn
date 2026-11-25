@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { useThemedStyles, type Theme } from '@/theme';
@@ -12,6 +13,7 @@ interface SearchBarProps {
 export default function SearchBar(props: SearchBarProps) {
   const { value, onChangeText } = props;
   const { theme, styles } = useThemedStyles(createStyles);
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -19,7 +21,7 @@ export default function SearchBar(props: SearchBarProps) {
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder="Rechercher un produit"
+        placeholder={t('catalog.search')}
         placeholderTextColor={theme.colors.textMuted}
         style={styles.input}
         // Pas de majuscule ni de correction automatique pour une recherche.
@@ -28,14 +30,14 @@ export default function SearchBar(props: SearchBarProps) {
         returnKeyType="search"
         // On affiche notre propre bouton d'effacement, identique sur iOS et Android.
         clearButtonMode="never"
-        accessibilityLabel="Rechercher un produit"
+        accessibilityLabel={t('catalog.search')}
       />
       {value.length > 0 ? (
         <Pressable
           onPress={() => onChangeText('')}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Effacer la recherche"
+          accessibilityLabel={t('catalog.clearSearch')}
         >
           <Ionicons name="close-circle" size={20} color={theme.colors.textMuted} />
         </Pressable>

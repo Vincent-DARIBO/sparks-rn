@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 import { ProductPhotoService, type PhotoSource } from '../services/ProductPhotoService';
@@ -8,7 +9,8 @@ import useUpdateProduct from './useUpdateProduct';
 // Photo d'un produit : appareil photo ou galerie, au choix de l'utilisateur.
 export default function useProductPhoto(productId: string) {
   const { updateProduct } = useUpdateProduct(productId);
-  const { handleMediaError } = useMediaErrorHandler('Photo du produit');
+  const { t } = useTranslation();
+  const { handleMediaError } = useMediaErrorHandler(t('product.photoTitle'), 'camera');
   const [isSavingPhoto, setIsSavingPhoto] = useState(false);
 
   const pickFrom = async (source: PhotoSource) => {
@@ -25,10 +27,10 @@ export default function useProductPhoto(productId: string) {
   };
 
   const choosePhoto = () => {
-    Alert.alert('Photo du produit', undefined, [
-      { text: 'Prendre une photo', onPress: () => void pickFrom('camera') },
-      { text: 'Choisir dans la galerie', onPress: () => void pickFrom('library') },
-      { text: 'Annuler', style: 'cancel' },
+    Alert.alert(t('product.photoTitle'), undefined, [
+      { text: t('product.takePhoto'), onPress: () => void pickFrom('camera') },
+      { text: t('product.chooseFromLibrary'), onPress: () => void pickFrom('library') },
+      { text: t('common.cancel'), style: 'cancel' },
     ]);
   };
 

@@ -1,3 +1,5 @@
+import i18n from '@/i18n';
+
 import { getStockStatus, getStockText } from '../stock';
 
 /** Fonction pure : mêmes entrées, même sortie. Aucun rendu, aucune doublure. */
@@ -18,8 +20,8 @@ describe('getStockStatus', () => {
 
 describe('getStockText', () => {
   it('assemble le libellé du statut et la quantité', () => {
-    expect(getStockText('ok', 25)).toBe('En stock · 25');
-    expect(getStockText('low', 3)).toBe('Stock bas · 3');
-    expect(getStockText('out', 0)).toBe('Rupture · 0');
+    expect(getStockText('ok', 25, i18n.t)).toBe('En stock · 25');
+    expect(getStockText('low', 3, i18n.t)).toBe('Stock bas · 3');
+    expect(getStockText('out', 0, i18n.t)).toBe('Rupture · 0');
   });
 });

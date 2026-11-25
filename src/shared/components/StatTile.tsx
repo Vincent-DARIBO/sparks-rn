@@ -4,7 +4,8 @@ import { useThemedStyles, type ColorTokens, type Theme } from '@/theme';
 
 interface StatTileProps {
   label: string;
-  value: number;
+  /** Nombre déjà formaté pour la langue (« 5 000 » en français, « 5,000 » en anglais). */
+  value: string;
   /** Couleur sémantique de la valeur (par défaut : texte principal). */
   tone?: keyof ColorTokens;
 }

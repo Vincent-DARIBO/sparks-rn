@@ -5,6 +5,7 @@
 # Prérequis : `bun run api:reset` puis `bun run api` ; `bunx expo start`.
 # Si le scénario échoue en cours de route, le stock reste modifié :
 # relancez `bun run api:reset` avant de le rejouer.
+# Le scénario cherche des textes FRANÇAIS : l'application doit être en français (téléphone en français, ou Réglages › Langue › Français).
 #
 # L'adresse d'Expo Go est un PARAMÈTRE (-e), jamais écrite ici : elle change
 # d'un réseau et d'un poste à l'autre. Elle s'affiche dans le terminal d'Expo.
